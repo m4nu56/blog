@@ -3,7 +3,6 @@ import Head from 'next/head'
 import Layout, { siteTitle } from '../components/layout'
 import utilStyles from '../styles/utils.module.css'
 import { useState } from 'react'
-import AutocompleteCommune from '@bit/dev10.ui-library.autocomplete-commune';
 import { getSortedPostsData } from '../lib/posts'
 import Link from 'next/link'
 import Date from '../components/date'
@@ -42,22 +41,6 @@ export default function Home({ allPostsData }) {
           ))}
         </ul>
       </section>
-
-      {/* <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
-        <ul>
-          {data.data.map(city => <li>{city.nom}</li>)}
-        </ul>
-      </section> */}
-
-      <section>
-        <AutocompleteCommune apiUrl={'https://api-test.seldon-finance.com/seldon/api'}
-          setError={error => console.error(error)}
-          onChange={(e, city) => setCity(city)} />
-
-        <h1>{city && city.nom}</h1>
-
-      </section>
-
     </Layout>
   )
 }

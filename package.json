@@ -8,7 +8,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@bit/dev10.ui-library.autocomplete-commune": "^1.1.6",
     "date-fns": "^2.13.0",
     "gray-matter": "^4.0.2",
     "next": "9.3.5",
