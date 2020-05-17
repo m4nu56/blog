@@ -8,8 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "@bit/dev10.ui-library.autocomplete-commune": "^1.1.6",
+    "date-fns": "^2.13.0",
+    "gray-matter": "^4.0.2",
     "next": "9.3.5",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "remark": "^12.0.0",
+    "remark-html": "^11.0.2",
+    "swr": "^0.2.0"
   }
 }
