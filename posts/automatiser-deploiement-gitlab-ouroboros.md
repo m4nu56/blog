@@ -1,0 +1,224 @@
+---
+title: 'Automatiser le déploiement avec Gitlab + Docker + Ouroboros'
+date: '2019-11-12'
+---
+
+Le but de cet article est de vous montrer une solution simple et rapide pour mettre en place du déploiement continue.
+La stack du projet est composée d’une partie API en nodejs et d’une base de donnée en mongodb. La pipeline va créer une nouvelle image de notre API en nodejs et la déployer sur notre registry privé.
+
+---
+
+1. Gitlab CI
+
+L’objectif de notre pipeline est d’exécuter les tests unitaires et d’intégration puis de construire et déployer une image de l’API sur notre registry interne.
+
+[github gist Dockerfile](https://gist.github.com/m4nu56/1d86ff0232f0a0cea5865d27967f5402#file-dockerfile)
+```
+FROM node:10
+
+ENV TZ=Europe/Paris
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt-get update && apt-get install -y build-essential && apt-get install -y python
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json /usr/src/app/
+
+RUN npm install
+
+# Bundle app source
+COPY ./src/  /usr/src/app/
+
+# Copy jest configuration so we can execute tests on the container
+COPY jest.config.js /usr/src/app/jest.config.js
+
+# Copy config .env file
+COPY ./.env_docker /usr/src/app/.env
+
+EXPOSE 3000
+CMD [ "node", "server.js" ]
+```
+
+L’image du container Node est décrite ci dessus: on copie les sources du projet, on run un npm install, on expose le port pour Express puis on set les entry points node et server.js
+
+[github gist gitlab-ci.yml](https://gist.github.com/m4nu56/6ba37f8659be15ca31f743c165619788#file-gitlab-ci-yml)
+```
+image: docker:19.03.1
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  PROJECT_IMAGE: registry.domain.com/project-name
+  PROJECT_RELEASE_IMAGE: $PROJECT_IMAGE:$CI_COMMIT_REF_NAME
+  DOCKER_TLS_CERTDIR: ""
+
+services:
+  - docker:19.03.1-dind
+
+before_script:
+  # login sur le docker registry
+  - echo "$CI_JOB_TOKEN" | docker login -u gitlab-ci-token --password-stdin registry.domain.com
+
+stages:
+  - test
+  - release
+
+test:
+  stage: test
+  script:
+    # création d'un network pour lier mongo et nodejs
+    - docker network rm network-project || true && docker network create network-project*
+    # init et run du container mongo
+    - docker run -d --name mongo-db --network network-project -v /builds/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js -e MONGO_INITDB_DATABASE='project' -e MONGO_INITDB_ROOT_USERNAME='root' -e MONGO_INITDB_ROOT_PASSWORD='root' mongo:4.0
+    # build de l'image node (les sources sont copiées et npm install est fait)
+    - docker build --pull --network network-project -t $PROJECT_RELEASE_IMAGE node/
+    # démarrage du container avec les variables d'environnement de la ci
+    - docker run -d --env-file node/.env_tests --network network-project --name nodejs_test $PROJECT_RELEASE_IMAGE
+    # exécution des tests
+    - docker exec nodejs_test npm test
+    # cleanup kill containers and network
+    - docker stop nodejs_test && docker rm nodejs_test
+    - docker stop mongo-db || true
+    - docker network rm network-project
+
+release:
+  stage: release
+  script:
+    # build de l'image
+    - docker build --pull -t $PROJECT_RELEASE_IMAGE node/
+    # déploiement de l'image sur le repository
+    - docker push $PROJECT_RELEASE_IMAGE
+```
+
+Nous utilisons une image docker comme base pour l’exécution de notre pipeline. Cela nous permet de pouvoir simuler notre stack complète comme sur un vrai serveur avec la base de donnée et l’API afin d’exécuter les tests d’intégration.
+Vous remarquerez que nous faisons un docker login sur notre registry en before_script afin de pouvoir déployer notre image tout à l’heure.
+
+**Etapes du stage de test:**
+1. Création d’un network
+2. Démarrage container mongo
+3. Build et démarrage du container nodejs
+4. Exécution des tests depuis le container nodejs
+5. Nettoyage et rm de tous les containers et network créés
+ 
+**Etapes du stage release:**
+1. Build de l’image node
+2. Déploiement sur le registry
+
+2. Déploiement
+
+Sur notre serveur nous utilisons le docker-compose suivant afin de déployer la stack mongo + node:
+
+[github gist docker-compose.yml](https://gist.github.com/m4nu56/a035a75cb1af7b1c8b27a798ba30e5b2#file-docker-compose-yml)
+
+```
+version: "3.4"
+
+services:
+  mongo:
+    container_name: mongo
+    image: mongo:4.0
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: project
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      TZ: Europe/Paris
+    volumes:
+      - /mnt/docker-volume/project/data:/data/db
+      - /mnt/docker-volume/project/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+    networks:
+      - project-network
+
+  nodejs:
+    container_name: nodejs
+    restart: unless-stopped
+    # on utilise l'image déployée sur notre registry 
+    image: registry.domain.com/project:develop
+    working_dir: /usr/src/app
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo
+    networks:
+      - project-network
+
+networks:
+  project-network:
+```
+
+Ce qu’il faut surtout retenir ici c’est que pour le service node nous utilisons l’image qui est déployée sur notre registry privée:
+
+```
+    # on utilise l'image déployée sur notre registry 
+    image: registry.domain.com/project:develop
+```
+
+1. Automatisation de la mise à jour du container
+
+Nous allons utiliser un service appelé Ouroboros: ce service va pouvoir surveiller périodiquement les containers qu’on lui précisera afin de les mettre à jour avec la version la plus récente de l’image sur le registry.
+
+![Ouroboros logo](/images/automatiser-deploiement-gitlab-ouroboros/ouroboros_logo.jpeg)
+
+[github gist docker-compose.yml](https://gist.github.com/m4nu56/99211267da89a816a51d4b1295993c4a#file-docker-compose-yml)
+
+```
+version: '3'
+services:
+  ouroboros:
+    container_name: ouroboros
+    hostname: ouroboros
+    image: pyouroboros/ouroboros
+    environment:
+      - CLEANUP=true
+      - INTERVAL=300
+      - LOG_LEVEL=info
+      - SELF_UPDATE=false
+      - TZ=Europe/Paris
+      - MONITOR=nodejs
+      - DRY_RUN=false
+      - NOTIFIERS=https://hooks.slack.com/services/{tokenA}/{tokenB}/{tokenC}
+      - SKIP_STARTUP_NOTIFICATIONS=true
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config.json:/root/.docker/config.json
+```
+
+Nous lui précisons de surveiller le container ‘nodejs’: MONITOR=nodejs. Afin qu’il puisse se connecter à notre registry vous pouvez faire un docker login registry.domain.com depuis votre serveur et récupérer le fichier ‘config.json’ qui a été créé dans `/root/.docker/config.json`
+
+[github gist config.json](https://gist.github.com/m4nu56/3af555c0e6311c893ebf555ac1f78a9b#file-config-json)
+
+```
+{
+        "auths": {
+                "registry.domain.com": {
+                        "auth": "tokenXXXX"
+                }
+        },
+        "HttpHeaders": {
+                "User-Agent": "Docker-Client/18.09.0 (linux)"
+        }
+}
+```
+
+Je vous encourage a aller voir la documentation d’Ouroboros afin de pouvoir tester le bon fonctionnement de votre config avant de démarrer le service sur votre serveur.
+Ouroboros utilise un service de notification très complet appelé **Apprise** qui permet une intégration avec une grande variété de services. Vous voyez ici une implémentation avec **Slack**. Une notification est envoyée sur le channel configuré pour prévenir dès qu’un container à été mis à jour
+
+![Ouroboros slack notification](/images/automatiser-deploiement-gitlab-ouroboros/ouroboros_slack.png)
+
+*Tip*: Nous avons dû upgrade la version de docker de notre serveur afin de pouvoir faire fonctionner le service, en 18.x une erreur lors de l’authentification sur notre registry empêchait le bon fonctionnement.
+
+Une fois démarrée le service avec un `docker-compose up -d` vous pourrez voir le système mettre à jour votre container suivant l’interval que vous aurez configurer.
+
+![Ouroboros working](/images/automatiser-deploiement-gitlab-ouroboros/ouroboros_work.png)
+
+---
+
+J’espère que cette solution simple pour mettre en place du CI+CD avec Gitlab vous encouragera a l’essayer sur vos projets.

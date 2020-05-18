@@ -1,0 +1,94 @@
+---
+title: 'Run multiple Postman Collection in parallel — Stress-Tests'
+date: '2019-11-19'
+---
+
+A known limitation of the Postman Collection Runner is that it can only execute collection in a consecutive way. This is just a simple implementation of the solution explained in this[ StackOverflow conversation](https://stackoverflow.com/a/41181892/2042761).
+
+**Create your Postman Collection and corresponding tests**
+
+Here I needed to attack first `/api/persons` to get the list of persons ids.
+
+![/api/persons](/images/multiple-postman-collection-stress-test/collection.png)
+
+And then `/api/persons/:id` for each person in the list.
+
+![/api/persons/:id](/images/multiple-postman-collection-stress-test/collection2.png)
+
+To do that I used the `postman.setNextRequest()` tricks that specify the next request that will be executed in the collection run. And in each run I get the last personId and pop() it from the array in environment variables.
+
+**Export your collection and the environment variables**
+
+![/api/persons/:id](/images/multiple-postman-collection-stress-test/export_collection.png)
+
+And save the files in a `postman/` directory.
+
+**Create the new npm project**
+
+Simply run `npm init -y` and install the 3 dependencies: `npm i async newman path`
+
+```package.json
+{
+  "name": "newman_parallel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.1.0",
+    "newman": "^4.5.6",
+    "path": "^0.12.7"
+  }
+}
+```
+
+**The script !**
+
+It’s kind of self explanatory, update the path for your postman collection and environment, specify the number of concurrent run you want to launch with the constant `PARALLEL_RUN_COUNT` and execute the script with `npm start`
+
+```js
+const path = require('path')
+const async = require('async')
+const newman = require('newman')
+
+const PARALLEL_RUN_COUNT = 2
+
+const parametersForTestRun = {
+    collection: path.join(__dirname, 'postman/postman_collection.json'), // your collection
+    environment: path.join(__dirname, 'postman/localhost.postman_environment.json'), //your env
+    reporters: 'cli'
+};
+
+parallelCollectionRun = function (done) {
+    newman.run(parametersForTestRun, done);
+};
+
+let commands = []
+for (let index = 0; index < PARALLEL_RUN_COUNT; index++) {
+    commands.push(parallelCollectionRun);
+}
+
+// Runs the Postman sample collection thrice, in parallel.
+async.parallel(
+    commands,
+    (err, results) => {
+        err && console.error(err);
+
+        results.forEach(function (result) {
+            var failures = result.run.failures;
+            console.info(failures.length ? JSON.stringify(failures.failures, null, 2) :
+                `${result.collection.name} ran successfully.`);
+        });
+    });
+```
+
+![newman](/images/multiple-postman-collection-stress-test/newman.png)
+
+
+And here you can play around with your api and build some stress tests to see how it handles the pressure.
+You can find the code in the [Github repo](https://github.com/m4nu56/newman-parallel-run).

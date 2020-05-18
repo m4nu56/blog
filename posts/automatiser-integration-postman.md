@@ -1,0 +1,134 @@
+---
+title: 'Automatiser les tests d''intégration de votre API avec Postman et Newman'
+date: '2019-11-11'
+---
+
+Les tests sont une composante primordiale de n'importe quel développement et il est aujourd'hui très commun de retrouver un grand nombre de tests unitaire et de tests d'intégration avec nos projets. Mais il est moins fréquent de retrouver des tests qui s'exécutent directement sur l'application déployée. Avec les outils dont nous disposons à ce jour il est désormais très simple de mettre en place une simple batterie de tests qui permettent de reproduire un scénario d'utilisation de nos APIs et surtout de les automatiser afin qu'ils fassent partie intégrante de la CI de vos projets.
+
+1. **Création de la collection de requêtes avec Postman**
+
+Commencez par créer une nouvelle collection avec Postman. Vous pouvez ensuite organiser vos différentes requêtes en dossier si vous le souhaitez.
+
+![Postman collection](/images/automatiser-integration-postman/collection.png)
+
+*Tip*: vous pouvez ajouter un token d'authentification global pour toutes vos requêtes depuis la popup d'édition de la collection (ou d'un dossier). Il suffit ensuite de préciser dans l'édition de chaque requête qu'il doit `Inherit authentication from parent`.
+
+![authorization](/images/automatiser-integration-postman/authentication.png)
+
+*Tip*: Vous pouvez créer des environnements afin de pouvoir facilement tester votre api en local et sur le serveur d'intégration ou de production par exemple:
+
+![environments](/images/automatiser-integration-postman/environment.png)
+
+- Cliquez sur `Manage environment` sur l'icône en haut à droite de Postman
+- Créer les environnements que vous voulez
+- Ajouter des variables d'environnement tel que `host` qui pourra être `http://localhost:3000` en local et `https://integ.mydomain.com` pour votre serveur d'intégration.
+- Vous pouvez utiliser ces variables n'importe où dans l'écriture de vos requêtes en utilisant la syntaxe `{{host}}`
+
+![body query](/images/automatiser-integration-postman/body.png)
+
+L'écriture des requêtes est ensuite très simple vous trouverez plus d'information pour les écrire depuis la documentation officielle de Postman: [postman documentation](https://learning.getpostman.com/docs/postman/sending-api-requests/requests/)
+
+--- 
+
+2. **L'écriture des tests avec Postman**
+
+Vous aurez remarqué un onglet Tests qui est présent dans la vue requête. Les tests que vous écrivez sont exécutés à chaque fois que vous lancez les requêtes après que la réponse ait été reçue.
+
+L'écriture des tests se fait en javascript, vous trouverez des snippets très pratique dans un bloc à droite de l'éditeur.
+
+![tests](/images/automatiser-integration-postman/tests.png)
+
+La syntaxe d'écriture des tests avec Postman est très verbeuse et intuitive. Elle ressemble beaucoup aux librairies d'assertion communément utilisées en javascript. On peut facilement tester le statut de la réponse de cette manière:
+
+![test example](/images/automatiser-integration-postman/test_example.png)
+
+On peut aussi tester les données reçues de cette manière:
+
+![test example](/images/automatiser-integration-postman/test_example2.png)
+
+Là où ça devient très intéressant c'est avec la possibilité de stocker des variables d'environnements qui sont conservées entre les requêtes. On voit qu'ici on a conservé la propriété `_id` reçu de la réponse dans une variable `buildingId`. De la même manière que pour la variable `host` mis en place avant on peut utiliser cette variable dans les autres requêtes `{{buildingId}}`.
+
+![query params](/images/automatiser-integration-postman/query_params.png)
+
+![body params](/images/automatiser-integration-postman/body_params.png)
+
+Et on peut également écrire un scénario d'exécution en précisant la requête à exécuter ensuite à la fin des tests:
+
+![scenarize tests](/images/automatiser-integration-postman/scenarize_tests.png)
+
+La requête qui sera exécutée en suivant est celle dont le nom est `/buildings GET`.
+
+*Tip*: Vous pouvez rappeler en boucle une même requête en mettant le nom de la même requête et en conditionnant l'appel d'une nouvelle requête en fonction de la réponse.
+
+Vous pouvez ensuite lancer l'exécution de tous les tests en cliquant sur la collection > "Collection runner"
+
+![collection](/images/automatiser-integration-postman/collection2.png)
+
+Vous pouvez sélectionner l'environnement avec lequel lancer les tests et le nombre d'itération que vous voulez lancer.
+Si vous cliquer sur "Keep variable values" les variables d'environnement créées pendant l'exécution des tests seront conservées. C'est très util pour débugger les tests en erreur.
+
+---
+
+3. **Export des tests et exécution en CLI**
+
+Vous allez pouvoir lancer l'exécution de votre collection en command line grâce à un outil développé par Postman appelé (Newman)[https://www.npmjs.com/package/newman]
+Vous pouvez l'installer dans votre projet avec npm s'il s'agit d'un projet qui gère ses dépendances de cette manière:
+
+`npm i newman --save-dev`
+
+Vous pouvez exporter votre collection en cliquant sur la collection > Export
+
+![export collection](/images/automatiser-integration-postman/export_collection.png)
+
+Vous aurez ensuite un fichier .json qui pourra être exécuté avec Newman.
+Vous aurez également besoin d'exporter vos environnements:
+
+![export environment](/images/automatiser-integration-postman/environment_export.png)
+
+L'exécution des tests avec newman se fait ensuite simplement avec:
+
+`newman run MyCollection.postman_collection.json -environment localhost.postman_environment.json`
+
+![newman](/images/automatiser-integration-postman/newman.png)
+
+Vous pouvez ensuite vous simplifier la vie en ajoutant un script au package.json de votre projet:
+
+![package script](/images/automatiser-integration-postman/package_scripts.png)
+
+Afin de pouvoir lancer les tests simplement: 
+
+`npm run integration-tests-local`
+
+---
+
+4. **Intégration dans la pipeline Gitlab**
+
+L'intérêt de ces tests d'intégration est de pouvoir les exécuter de manière automatique après chaque déploiement afin de pouvoir être alerté au plus vite d'une possible régression et pouvoir revenir à une version précédente ou fixer le problème.
+Avec gitlab le plus simple est d'utiliser l'image officielle de Postman qui a déjà newman d'installée: `postman/newman_alpine33`
+Exemple d'un nouveau stage d'intégration sur notre pipeline:
+
+![gitlab job](/images/automatiser-integration-postman/gitlab_job.png)
+
+*Tip*: Nous utilisons gitlab en installation docker et la gestion des certificats est un vrai enfer du coup je n'ai jamais réussi à lancer les tests de ma collection qui attaquaient le serveur d'intégration non SSL. J'ai fini par mettre un certificat letsencrypt afin d'avoir une url en HTTPS.
+
+*Tip*: Nous exécutons ces tests de manière décalée de 5 minutes car notre procédure de déploiement est asynchrone et je n'ai pas de retour dans gitlab lorsque c'est terminé. Si vous utilisez une autre solution vous pouvez les lancer directement après le déploiement.
+
+---
+
+5. **Exécution périodique**
+
+Nous utilisons ici la fonctionnalité de **Scheduled Pipeline** de Gitlab et afin de ne pas relancer le build et deploy des images on peut simplement ajouter une règle d'exclusion sur les autres stages de la pipeline:
+
+![gitlab scheduled](/images/automatiser-integration-postman/scheduled_gitlab.png)
+
+Puis dans Gitlab:
+
+![gitlab scheduled](/images/automatiser-integration-postman/scheduled_gitlab2.png)
+
+Et de cette manière seul la partie test d'intégration est exécutée lors de l'exécution de cette pipeline programmée:
+
+![gitlab scheduled](/images/automatiser-integration-postman/scheduled_gitlab3.png)
+
+---
+
+J'espère que cet article vous aura plu et qu'il vous aura donné envie de vous intéresser à mettre en place ce genre de scénario de test.
