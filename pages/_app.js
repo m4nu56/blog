@@ -1,5 +1,24 @@
 import '../styles/global.css'
+import { MDXProvider } from '@mdx-js/react'
+import Layout , { siteTitle } from '../components/layout'
+import Head from 'next/head'
+import CodeBlock from '../components/CodeBlock'
+import CodeBlockWithLineNumbers from '../components/CodeBlockWithLineNumbers'
 
-export default function App({ Component, pageProps }) {
-    return <Component {...pageProps} />
-  }
+const mdComponents = {
+  h1: props => <h1 style={{ color: 'tomato' }} {...props} />,
+  pre: props => <div {...props} />,
+  code: CodeBlockWithLineNumbers
+}
+
+
+export default ({ Component, pageProps }) => (
+  <MDXProvider components={mdComponents}>
+    <Layout home>
+      <Head>
+        <title>{siteTitle}</title>
+      </Head>
+      <Component {...pageProps} />
+    </Layout>
+  </MDXProvider>
+)
