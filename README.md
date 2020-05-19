@@ -2,7 +2,7 @@
 
 Personal blog where I share some of my work.
 
-Built with next.js
+Built with next.js, deploy on Vercel
 
 Some of my posts are also available on [Medium](https://medium.com/@mnu)
 
