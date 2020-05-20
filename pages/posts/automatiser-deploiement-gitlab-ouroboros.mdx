@@ -1,7 +1,11 @@
----
-title: 'Automatiser le déploiement avec Gitlab + Docker + Ouroboros'
-date: '2019-11-12'
----
+export const meta = { 
+    title: 'Automatiser le déploiement avec Gitlab + Docker + Ouroboros', 
+    tags: ["gitlab", "docker", "continuous deployment"], 
+    publishDate: "2019-11-12", 
+    modifiedDate: false, 
+    seoDescription: "", 
+    exclude: false 
+};
 
 Le but de cet article est de vous montrer une solution simple et rapide pour mettre en place du déploiement continue.
 La stack du projet est composée d’une partie API en nodejs et d’une base de donnée en mongodb. La pipeline va créer une nouvelle image de notre API en nodejs et la déployer sur notre registry privé.
@@ -13,7 +17,8 @@ La stack du projet est composée d’une partie API en nodejs et d’une base de
 L’objectif de notre pipeline est d’exécuter les tests unitaires et d’intégration puis de construire et déployer une image de l’API sur notre registry interne.
 
 [github gist Dockerfile](https://gist.github.com/m4nu56/1d86ff0232f0a0cea5865d27967f5402#file-dockerfile)
-```
+
+```Dockerfile
 FROM node:10
 
 ENV TZ=Europe/Paris
@@ -47,7 +52,8 @@ CMD [ "node", "server.js" ]
 L’image du container Node est décrite ci dessus: on copie les sources du projet, on run un npm install, on expose le port pour Express puis on set les entry points node et server.js
 
 [github gist gitlab-ci.yml](https://gist.github.com/m4nu56/6ba37f8659be15ca31f743c165619788#file-gitlab-ci-yml)
-```
+
+```yml
 image: docker:19.03.1
 
 variables:
@@ -115,7 +121,7 @@ Sur notre serveur nous utilisons le docker-compose suivant afin de déployer la 
 
 [github gist docker-compose.yml](https://gist.github.com/m4nu56/a035a75cb1af7b1c8b27a798ba30e5b2#file-docker-compose-yml)
 
-```
+```yml
 version: "3.4"
 
 services:
@@ -155,7 +161,7 @@ networks:
 
 Ce qu’il faut surtout retenir ici c’est que pour le service node nous utilisons l’image qui est déployée sur notre registry privée:
 
-```
+```yml
     # on utilise l'image déployée sur notre registry 
     image: registry.domain.com/project:develop
 ```
@@ -168,7 +174,7 @@ Nous allons utiliser un service appelé Ouroboros: ce service va pouvoir surveil
 
 [github gist docker-compose.yml](https://gist.github.com/m4nu56/99211267da89a816a51d4b1295993c4a#file-docker-compose-yml)
 
-```
+```yml
 version: '3'
 services:
   ouroboros:
@@ -195,7 +201,7 @@ Nous lui précisons de surveiller le container ‘nodejs’: MONITOR=nodejs. Afi
 
 [github gist config.json](https://gist.github.com/m4nu56/3af555c0e6311c893ebf555ac1f78a9b#file-config-json)
 
-```
+```json
 {
         "auths": {
                 "registry.domain.com": {

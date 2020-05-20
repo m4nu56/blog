@@ -1,7 +1,11 @@
----
-title: 'Jersey Injection Dependency example with HK2'
-date: '2019-11-14'
----
+export const meta = { 
+    title: "Jersey Injection Dependency example with HK2", 
+    tags: ["jersey", "java", "dependency injection"], 
+    publishDate: "2019-11-14", 
+    modifiedDate: false, 
+    seoDescription: null, 
+    exclude: false 
+};
 
 Example of a Jersey project using the dependency injection framework HK2 to inject logged user into the application via a custum annotation
 
@@ -14,7 +18,7 @@ Example of a Jersey project using the dependency injection framework HK2 to inje
 
 Generate a project from [Maven Archetype](https://eclipse-ee4j.github.io/jersey.github.io/documentation/latest/getting-started.html#new-from-archetype):
 
-```
+```cmd
 mvn archetype:generate -DarchetypeArtifactId=jersey-quickstart-grizzly2 \
 -DarchetypeGroupId=org.glassfish.jersey.archetypes -DinteractiveMode=false \
 -DgroupId=com.example -DartifactId=simple-service -Dpackage=com.example \

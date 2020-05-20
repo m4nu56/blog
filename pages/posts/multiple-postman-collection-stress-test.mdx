@@ -1,7 +1,11 @@
----
-title: 'Run multiple Postman Collection in parallel — Stress-Tests'
-date: '2019-11-19'
----
+export const meta = { 
+    title: "Run multiple Postman Collection in parallel — Stress-Tests", 
+    tags: ["postman", "continuous integration", "integration tests", "test"], 
+    publishDate: "2019-11-19", 
+    modifiedDate: false, 
+    seoDescription: null, 
+    exclude: false 
+};
 
 A known limitation of the Postman Collection Runner is that it can only execute collection in a consecutive way. This is just a simple implementation of the solution explained in this[ StackOverflow conversation](https://stackoverflow.com/a/41181892/2042761).
 
@@ -27,7 +31,7 @@ And save the files in a `postman/` directory.
 
 Simply run `npm init -y` and install the 3 dependencies: `npm i async newman path`
 
-```package.json
+```json
 {
   "name": "newman_parallel",
   "version": "1.0.0",

@@ -1,15 +1,13 @@
 export const meta = { 
     title: "Build a simple CLI tool to simplify your day-to-day tasks", 
-    tags: ["serverless", "node.js", "python"], 
-    layout: "post", 
+    tags: ["node.js", "npm", "cli"], 
     publishDate: "2020-04-30", 
     modifiedDate: false, 
-    seoDescription: "This post demonstrates syntax-hightlighted code in your post.", 
+    seoDescription: "This post explain how to build a CLI tool with npm.", 
     exclude: false 
 };
 
-
-It’s a common task in my current position to download and restore client schema on my local postgres to debug it. So I decided to build a small CLI tool to help me.
+It's a common task in my current position to download and restore client schema on my local postgres to debug it. So I decided to build a small CLI tool to help me.
 
 --- 
 
@@ -27,7 +25,7 @@ The tool look for the .backup files in my folders and subfolders of `~/Documents
 
 Once chosen it asks me the name of the schema (try to deduce it from the filename)
 
-After that I need to enter the database credentials. Only for the first time because it’s saved into a local storage thank’s to `configstore`
+After that I need to enter the database credentials. Only for the first time because it's saved into a local storage thank's to `configstore`
 
 ![pg-schema-restorer](/images/restore-pg-schema-cli-tool/credentials.png)
 
@@ -36,8 +34,8 @@ I added some flavours in the script I use at my job to automatically reference t
 
 **The code**
 
-I won’t go into too much details because the post I referenced earlier is very detailled.
-The following is just to clear the console and display the ASCII art because I can. It’s using `chalk` to colorize the output, `figlet` for the art and clear
+I won't go into too much details because the post I referenced earlier is very detailled.
+The following is just to clear the console and display the ASCII art because I can. It's using `chalk` to colorize the output, `figlet` for the art and clear
 
 ```js
 clear()
@@ -48,7 +46,7 @@ console.log(
 )
 ```
 
-To look for the backup in a directory and all it’s subdirectories I’m using a library called `klawSync` you can apply a filter to it so it will already find exactly what you’re looking for
+To look for the backup in a directory and all it's subdirectories I'm using a library called `klawSync` you can apply a filter to it so it will already find exactly what you're looking for
 
 ```js
 const findBackupsInPath = filePath => {
@@ -79,7 +77,7 @@ askBackupFile: filelist => {
 }
 ```
 
-I want the database credentials to be stored so that users don’t have to type it anytime but in the same time they should be able to reset it if they need to restore on another database.
+I want the database credentials to be stored so that users don't have to type it anytime but in the same time they should be able to reset it if they need to restore on another database.
 
 ```js
 // retrieve databaseCredentials
@@ -97,9 +95,9 @@ if (!conf.get('databaseCredentials')) {
 const databaseCredentials = conf.get('databaseCredentials')
 ```
 
-For that I’m using `configstore` which simply store my configs into a json file in the npm user directory. I ask the user if he wants to continue with the saved credentials if any.
+For that I'm using `configstore` which simply store my configs into a json file in the npm user directory. I ask the user if he wants to continue with the saved credentials if any.
 
-To drop the existing schema I’m using `pg` ORM which is really easy to manipulate.
+To drop the existing schema I'm using `pg` ORM which is really easy to manipulate.
 
 ```js
 const client = new Client(databaseCredentials)
@@ -107,8 +105,8 @@ await client.query(`DROP SCHEMA IF EXISTS ${schemaName} CASCADE`);
 await client.end()
 ```
 
-And finally to restore the schema I’m using the system `pg_restore` thank’s to the `exec` command in the npm package `child_process`
-To simplify my code I’ve encapsulated it into a Promise so that I can await it’s result before continuing the program.
+And finally to restore the schema I'm using the system `pg_restore` thank's to the `exec` command in the npm package `child_process`
+To simplify my code I've encapsulated it into a Promise so that I can await it's result before continuing the program.
 
 ```js
 await new Promise((resolve, reject) => {
@@ -126,8 +124,8 @@ await new Promise((resolve, reject) => {
 
 ---
 
-If you’re interested in reading the code I’ve made it available on [github](https://github.com/m4nu56/pg-schema-restorer)
+If you're interested in reading the code I've made it available on [github](https://github.com/m4nu56/pg-schema-restorer)
 
-Feel free to comment it, correct it, test it etc.. I’ve only been using it myself on my Ubuntu setup so for sure it needs to be somehow adapted for MacOS and Windows.
+Feel free to comment it, correct it, test it etc.. I've only been using it myself on my Ubuntu setup so for sure it needs to be somehow adapted for MacOS and Windows.
 
-You can also follow me on Twitter if you’d like, I share mostly geeky coding stuff: https://twitter.com/m4nu56
+You can also follow me on Twitter if you'd like, I share mostly geeky coding stuff: https://twitter.com/m4nu56

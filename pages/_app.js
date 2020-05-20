@@ -8,7 +8,7 @@ import CodeBlockWithLineNumbers from '../components/CodeBlockWithLineNumbers'
 const mdComponents = {
   h1: props => <h1 style={{ color: 'tomato' }} {...props} />,
   pre: props => <div {...props} />,
-  code: CodeBlockWithLineNumbers
+  code: CodeBlock
 }
 
 
