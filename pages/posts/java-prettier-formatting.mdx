@@ -18,18 +18,18 @@ Optionated because it comes with formatting rules by default and very few option
 ![Prettier](/images/java-prettier-formatting/prettier.png)
 
 Prettier can also format a lot of other languages than JavaScript: 
-* JSX
-* Flow
-* TypeScript
-* JSON
-* HTML
-* Vue
-* Angular
-* CSS
-* Less
-* SCSS
-* Markdown
-* MDX (used in this blog btw)
+- JSX
+- Flow
+- TypeScript
+- JSON
+- HTML
+- Vue
+- Angular
+- CSS
+- Less
+- SCSS
+- Markdown
+- MDX (used in this blog btw)
 
 And some community plugins are available for other programming languages like PHP, PostgreSQL.. and **Java**! 
 
@@ -86,6 +86,36 @@ So that each time the validate phase is run the plugin will be executed in write
 
 You can also execute the plugin on the command line if you are in that sort of things: 
 `mvn prettier:check` or `mvn prettier:write`
+
+## Configuration
+
+We've only played with the 4 following configuration options: 
+- `printWidth` = 120
+- `tabWidth` = 4 
+- `useTabs` = true
+- `endOfLine` = crlf
+
+The other options available seem to not apply for Java language. 
+
+We're using a lot of enums with attributes in our projets and prettier formatting for those is terrible so I suggest you encapsulate the code you don't want prettier to format with the comments: 
+
+` // formatter:off `
+
+and 
+
+` // formatter:on `
+
+Like so: 
+
+```java
+public enum Field implements FieldDb {
+	// @formatter:off
+  ID(        "id",           Types.BIGINT,    true,  MODE_SEL_INSERT),
+  ID_COMPTE( "id_compte",    Types.BIGINT,    true,  MODE_SEL_INS_UP),
+  ID_CENTRE( "id_centre",    Types.BIGINT,    false, MODE_SEL_INS_UP),
+	// @formatter:on
+  ... 
+```
 
 ## Last step
 
