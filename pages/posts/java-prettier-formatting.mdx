@@ -1,0 +1,92 @@
+export const meta = { 
+    title: 'Prettier to format your Java codebase', 
+    tags: ["java", "formatting"], 
+    publishDate: "2020-05-21", 
+    modifiedDate: false, 
+    seoDescription: "", 
+    exclude: false 
+};
+
+# Prettier to format your Java codebase
+
+So we've all been using [Prettier](https://prettier.io/) in our JavaScript projects or at least have heard about it.
+
+Prettier is an opinionated code formatter that you can plug to your IDE or in a pre-commit hook to automatically format your code. 
+
+Optionated because it comes with formatting rules by default and very few options. Although their seems to be a lot more today than in my memory.. 
+
+![Prettier](/images/java-prettier-formatting/prettier.png)
+
+Prettier can also format a lot of other languages than JavaScript: 
+* JSX
+* Flow
+* TypeScript
+* JSON
+* HTML
+* Vue
+* Angular
+* CSS
+* Less
+* SCSS
+* Markdown
+* MDX (used in this blog btw)
+
+And some community plugins are available for other programming languages like PHP, PostgreSQL.. and **Java**! 
+
+## Prettier-java plugin
+
+The community developped a plugin for java that uses node under the hood to format your java classes. 
+Plugin is available on [github](https://github.com/jhipster/prettier-java). 
+
+It's really easy to manipulate: 
+
+```cmd
+npm install -g prettier prettier-plugin-java
+prettier --write "**/*.java"
+```
+
+But that's not very convenient. We don't want to ask every developer that will work on the codebase to install the plugin and run it itself. 
+
+## Maven plugin for the prettier-java plugin
+
+Thanksfully a maven plugin has been developped by HubSpot. It's also available on [github](https://github.com/HubSpot/prettier-maven-plugin). 
+
+The plugin comes bundled with node, prettier and the prettier-java plugin so developers don't have to install it themselves and it can be executed inside a maven goal. 
+
+In your pom.xml config file simply add the following plugin: 
+
+```xml
+<build>
+  <plugins>
+    <plugin>
+      <groupId>com.hubspot.maven.plugins</groupId>
+      <artifactId>prettier-maven-plugin</artifactId>
+      <version>0.7</version>
+      <configuration>
+        <printWidth>90</printWidth>
+        <tabWidth>2</tabWidth>
+        <useTabs>false</useTabs>
+        <ignoreConfigFile>true</ignoreConfigFile>
+        <ignoreEditorConfig>true</ignoreEditorConfig>
+      </configuration>
+      <executions>
+        <execution>
+          <phase>validate</phase>
+          <goals>
+            <goal>write</goal>
+          </goals>
+        </execution>
+      </executions>      
+    </plugin>
+  </plugins>
+</build>
+```
+
+So that each time the validate phase is run the plugin will be executed in write mode and will reformat all the project files.
+
+You can also execute the plugin on the command line if you are in that sort of things: 
+`mvn prettier:check` or `mvn prettier:write`
+
+## Last step
+
+The last step would be to execute the `mvn prettier:write` command on a git pre-commit hook. For now we haven't configured it on our projects, when so I'll update the post with our procedure.
