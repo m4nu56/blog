@@ -1,0 +1,237 @@
+export const meta = { 
+    title: "Keycloak integration into a Java Servlet Application", 
+    tags: ["java", "keycloak"], 
+    publishDate: "2020-05-23", 
+    modifiedDate: false, 
+    seoDescription: null, 
+    exclude: false 
+};
+
+# Keycloak integration into a Java Servlet application
+
+We'll see how to configure a Java Servlet based application so it can be secure with Keycloak. 
+
+[Keycloak](https://www.keycloak.org/) is an Open Source Identity and Access Management that can be used to delegate entirely the security of an application. 
+
+
+## 1. Keycloak configuration
+
+The Keycloak documentation is really easy to follow. You can see for yourself here the section about the configuration of your Keycloak instance: [https://www.keycloak.org/docs/latest/authorization_services/#_getting_started_hello_world_create_realm](https://www.keycloak.org/docs/latest/authorization_services/#_getting_started_hello_world_create_realm)
+
+You need to configure: 
+- A realm 
+- A user with role `user`, we'll see later how it's used
+- A Client. It's a representation of your Java application
+    - Client protocol: openid-connect
+    - Access Type: public
+    - Valid Redirect URIs: the url of your dev. environment or * for the time being
+
+## 2. Tomcat security-constraint
+
+We're using the Tomcat `security-constraint` that enable a security verification at the application level on Tomcat. 
+The Keycloak team developed a convenient Valve for the Tomcat Security system that handle the redirect to and from the Keycloak login page. 
+
+### 1. You need to add the following to the `context.xml` of your application: 
+
+```xml
+<Context>
+	<Valve className="org.keycloak.adapters.tomcat.KeycloakAuthenticatorValve"/>
+</Context>
+```
+
+### 2. Install the [Keycloak Valve libraries](https://mvnrepository.com/artifact/org.keycloak/keycloak-tomcat-adapter-dist) into the `${tomcat}/lib` directory on your Tomcat server
+
+### 3. You need to copy the `keycloak.json` config file into `/WEB-INF/keycloak.json`
+
+You can download the file in your Client installation tab: 
+
+![adapter-config](/images/tomcat-keycloak-servlet/adapter-config.png)
+
+### 4. Add `security-constraint` in your `web.xml`
+
+```xml
+<security-constraint>
+    <web-resource-collection>
+        <web-resource-name>Private area</web-resource-name>
+        <url-pattern>/esp_privat/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+        <role-name>user</role-name>
+    </auth-constraint>
+</security-constraint>
+
+<security-constraint>
+    <web-resource-collection>
+        <web-resource-name>Public area</web-resource-name>
+        <url-pattern>/api/*</url-pattern>
+    </web-resource-collection>
+</security-constraint>
+
+<login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>this is ignored currently</realm-name>
+</login-config>
+
+<security-role>
+    <role-name>user</role-name>
+</security-role>
+```
+
+Here we defined 2 URL patterns:
+- `/esp_privat/*` that require a user to be connected with a role `user`
+- `/api/*` that require no authentification
+
+### 5. Results
+
+So when you try accessing any route under `/esp_privat/` in your application Keycloak valve now automatically redirect you to the login page in your Keycloak instance. 
+When successfuly logged in Keycloak redirects you to the asked page. 
+
+What we need to do now is to identify the user logged in thank's to the token Keycloak is adding to the cookies of the web navigator. 
+
+
+## 3. Intercept Keycloak access token to log the user into your app
+
+### Keycloak dependencies
+
+Add the following to the `pom.xml` of your `webapp` application: 
+
+```xml
+<dependency>
+    <groupId>org.keycloak</groupId>
+    <artifactId>keycloak-core</artifactId>
+    <version>9.0.2</version>
+    <scope>provided</scope>
+</dependency>
+
+<dependency>
+    <groupId>org.keycloak</groupId>
+    <artifactId>keycloak-adapter-core</artifactId>
+    <version>9.0.2</version>
+    <scope>provided</scope>
+</dependency>
+
+<dependency>
+    <groupId>org.keycloak</groupId>
+    <artifactId>keycloak-adapter-spi</artifactId>
+    <version>9.0.2</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+Notice the scope = `provided` since we will be using the libraries added previously into the tomcat library folder. We don't want to override it with another version of the libraries.
+
+### Read the token
+
+The following snippet will extract the token from the request and verify if it's lifetime is expired. It returns true in case the token is valid. 
+
+```java
+
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.TokenVerifier;
+import org.keycloak.common.VerificationException;
+import org.keycloak.representations.AccessToken;
+
+... 
+
+/**
+* Verify if user is logged in keycloak by validating token in request
+*/
+public boolean isLoggedInKeycloak(HttpServletRequest request) throws VerificationException {
+    KeycloakSecurityContext keycloakSecurityContextToken = getKeycloakSecurityContextToken(request);
+    if (keycloakSecurityContextToken == null) {
+        return false;
+    }
+    return !isTokenExpired(keycloakSecurityContextToken);
+}
+
+private boolean isTokenExpired(KeycloakSecurityContext keycloakSecurityContextToken) throws VerificationException {
+    AccessToken token = TokenVerifier.create(keycloakSecurityContextToken.getTokenString(), AccessToken.class).getToken();
+    if (token.isExpired()) {
+        logger.warn("User token is expired..." + token);
+        return true;
+    }
+    return false;
+}
+```
+
+In our case we also needed to verify if the user is a member of the correct group so we added the following method check: 
+
+```java
+private void handleGroupMembership(@Nonnull KeycloakSecurityContext keycloakSecurityContext, String keycloakPreferredUsername) {
+    Object groups = keycloakSecurityContext.getToken().getOtherClaims().getOrDefault("groups", new ArrayList<>());
+    if (groups == null) {
+        throw new GenericRuntimeException("Fail to read groups from the token of the user " + keycloakPreferredUsername);
+    }
+    ((List<String>) groups)
+        .stream()
+        .filter(s -> s.equalsIgnoreCase("/my-group"))
+        .findFirst()
+        .orElseThrow(() -> new GenericRuntimeException("User \"" + keycloakPreferredUsername + "\" is not a member of /my-group"));
+}
+```
+
+We then called the previous method in a pre-action hook into all the call received by our servlets so that it can be catched by any servlet like so: 
+
+```java
+boolean isUserLoggedIn = request.getSession().getAttribute(USER_SESSION) != null;
+if (isLoggedInKeycloak(request) && !isUserLoggedIn) {
+    logger.info("User logged in Keycloak but not logged in the app. Logging in the user...");
+    new KeycloakLoginService().login(request, getKeycloakSecurityContextToken(request));
+}
+else if (!isLoggedInKeycloak(request) && isUserLoggedIn) {
+    logger.info("User not logged in Keycloak but logged in the app. Logging out the user...");
+    sessionLogout.logout(request, response);
+    return;
+}
+```
+
+### Logout
+
+To logout a user from Keycloak you can use the `request.logout()` method. We use the following method: 
+
+```java
+public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+        session.invalidate();
+    }
+    request.logout();
+    request.getSession(true); // create a new session
+    response.sendRedirect(request.getContextPath());
+}
+```
+
+## 4. Maven profiles to compile versions with and without keycloak login
+
+In one of our project we needed to be able to deploy a version of the app that doesn't use the Keycloak login feature but our previous login mechanism.
+Of course we wanted to keep a unique codebase with the less difference as possible. 
+We identify that the only thing preventing us from working as before was the `security-constraint` section in the `web.xml` config file. 
+
+We will be using the Maven filtering solution with a little hack we found on SO: [https://stackoverflow.com/questions/3298763/maven-customize-web-xml-of-web-app-project/8593041#8593041](https://stackoverflow.com/questions/3298763/maven-customize-web-xml-of-web-app-project/8593041#8593041)
+It consists in adding 2 variables in your web.xml like so: 
+
+```xml
+${enable.security.start}
+<security-constraint>
+  ...
+  // all of the XML that you need, in a completely readable format
+  ...
+</login-config>  
+${enable.security.end}
+```
+
+And have it replaced by comment block start `&lt;!--` and end `-&gt;` in the profile where you don't want to use Keycloak. 
+
+So in our default `ci` profile we defined the following properties: 
+
+```xml
+<enable.security.start></enable.security.start>
+<enable.security.end></enable.security.end>
+```
+
+and in the `without-keycloak` profile: 
+
+```xml
+<enable.security.start>&lt;!--</enable.security.start>
+<enable.security.end>--&gt;</enable.security.end>
+```
