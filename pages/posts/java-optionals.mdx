@@ -1,0 +1,22 @@
+export const meta = { 
+    title: "Java Optionals", 
+    tags: ["java"], 
+    publishDate: "2020-05-22", 
+    modifiedDate: false, 
+    seoDescription: null, 
+    exclude: false 
+};
+
+# Java Optionals
+
+Replace `if != null` statement with a Java optional
+
+```java
+if(myVar != null){
+    logger.info("MyVar=" + myVar);
+}
+```
+
+```java
+Optional.ofNullable(myVar).ifPresent(var -> logger.info("MyVar=" + var));
+```
