@@ -3,7 +3,6 @@ import { MDXProvider } from '@mdx-js/react'
 import Layout, { siteTitle } from '../components/layout'
 import Head from 'next/head'
 import CodeBlock from '../components/CodeBlock'
-import CodeBlockWithLineNumbers from '../components/CodeBlockWithLineNumbers'
 import Home from '.'
 
 const mdComponents = {

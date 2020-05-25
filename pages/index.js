@@ -7,7 +7,7 @@ export default function Home({ allPostsData }) {
   return (
     <React.Fragment>
       <section className={utilStyles.headingMd}>
-        <p>Fullstack Web Developer. Curious and eager to learn. Obsessed with code quality and clean code. Love to DevOps (thank's docker) but still very bad at it ;)</p>
+        <p>Hi! I'm what you could call a fullstack Web Developer. Curious and eager to learn. Code quality, clean code.</p>
       </section>
 
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>

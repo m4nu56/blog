@@ -1,15 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html,
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
-    Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  line-height: 1.6;
-  font-size: 18px;
+  @apply font-sans text-base leading-loose;
 }
 
-* {
-  box-sizing: border-box;
+body {
+  @apply bg-white p-10;
+}
+
+h1 {
+  @apply text-3xl text-orange-600 font-extrabold text-center;
 }
 
 a {
@@ -19,11 +22,6 @@ a {
 
 a:hover {
   text-decoration: underline;
-}
-
-img {
-  max-width: 100%;
-  display: block;
 }
 
 code {
