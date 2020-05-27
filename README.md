@@ -1,8 +1,18 @@
-# https://blog.m4nu56.now.sh/
+# https://m4nu56.dev
 
-Personal blog where I share some of my work.
+Personal blog about development where I share some of my work.
 
-Built with next.js, deploy on Vercel
+Built with next.js, deployed on Vercel. 
+
+At first I wanted to play a little with NextJS and I decided to move the few posts I've been publishing on Medium up in here.
+I also discovered [Tailwind CSS](https://tailwindcss.com/) that I wanted to try for a long time now and it just made me realized how bad I am at designing stuff :-)
+
+## Roadmap
+
+- Add a navigation menu and a "About me" page
+- Build a theme for the website to make it more attractive :-°
+- Integrate twitter feed with last tweets
+- Add a search functionnality
 
 Some of my posts are also available on [Medium](https://medium.com/@mnu)
 
