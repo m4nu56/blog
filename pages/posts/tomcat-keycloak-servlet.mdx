@@ -31,7 +31,7 @@ You need to configure:
 We're using the Tomcat `security-constraint` that enable a security verification at the application level on Tomcat. 
 The Keycloak team developed a convenient Valve for the Tomcat Security system that handle the redirect to and from the Keycloak login page. 
 
-### 1. You need to add the following to the `context.xml` of your application: 
+### 2.1. You need to add the following to the `context.xml` of your application: 
 
 ```xml
 <Context>
@@ -39,15 +39,15 @@ The Keycloak team developed a convenient Valve for the Tomcat Security system th
 </Context>
 ```
 
-### 2. Install the [Keycloak Valve libraries](https://mvnrepository.com/artifact/org.keycloak/keycloak-tomcat-adapter-dist) into the `${tomcat}/lib` directory on your Tomcat server
+### 2.2. Install the [Keycloak Valve libraries](https://mvnrepository.com/artifact/org.keycloak/keycloak-tomcat-adapter-dist) into the `${tomcat}/lib` directory on your Tomcat server
 
-### 3. You need to copy the `keycloak.json` config file into `/WEB-INF/keycloak.json`
+### 2.3. You need to copy the `keycloak.json` config file into `/WEB-INF/keycloak.json`
 
 You can download the file in your Client installation tab: 
 
-![adapter-config](/images/tomcat-keycloak-servlet/adapter-config.png)
+![adapter-config](https://m4nu56.dev/images/tomcat-keycloak-servlet/adapter-config.png)
 
-### 4. Add `security-constraint` in your `web.xml`
+### 2.4. Add `security-constraint` in your `web.xml`
 
 ```xml
 <security-constraint>
@@ -81,7 +81,7 @@ Here we defined 2 URL patterns:
 - `/esp_privat/*` that require a user to be connected with a role `user`
 - `/api/*` that require no authentification
 
-### 5. Results
+### 2.5. Results
 
 So when you try accessing any route under `/esp_privat/` in your application Keycloak valve now automatically redirect you to the login page in your Keycloak instance. 
 When successfuly logged in Keycloak redirects you to the asked page. 
@@ -91,7 +91,7 @@ What we need to do now is to identify the user logged in thank's to the token Ke
 
 ## 3. Intercept Keycloak access token to log the user into your app
 
-### Keycloak dependencies
+### 3.1. Keycloak dependencies
 
 Add the following to the `pom.xml` of your `webapp` application: 
 
@@ -120,7 +120,7 @@ Add the following to the `pom.xml` of your `webapp` application:
 
 Notice the scope = `provided` since we will be using the libraries added previously into the tomcat library folder. We don't want to override it with another version of the libraries.
 
-### Read the token
+### 3.2. Read the token
 
 The following snippet will extract the token from the request and verify if it's lifetime is expired. It returns true in case the token is valid. 
 
@@ -185,7 +185,7 @@ else if (!isLoggedInKeycloak(request) && isUserLoggedIn) {
 }
 ```
 
-### Logout
+### 3.3. Logout
 
 To logout a user from Keycloak you can use the `request.logout()` method. We use the following method: 
 

@@ -14,7 +14,7 @@ La stack du projet est composée d’une partie API en nodejs et d’une base de
 
 ---
 
-1. Gitlab CI
+## 1. Gitlab CI
 
 L’objectif de notre pipeline est d’exécuter les tests unitaires et d’intégration puis de construire et déployer une image de l’API sur notre registry interne.
 
@@ -51,7 +51,7 @@ EXPOSE 3000
 CMD [ "node", "server.js" ]
 ```
 
-L’image du container Node est décrite ci dessus: on copie les sources du projet, on run un npm install, on expose le port pour Express puis on set les entry points node et server.js
+L'image du container Node est décrite ci dessus: on copie les sources du projet, on run un npm install, on expose le port pour Express puis on set les entry points node et server.js
 
 [github gist gitlab-ci.yml](https://gist.github.com/m4nu56/6ba37f8659be15ca31f743c165619788#file-gitlab-ci-yml)
 
@@ -117,7 +117,7 @@ Vous remarquerez que nous faisons un docker login sur notre registry en before_s
 1. Build de l’image node
 2. Déploiement sur le registry
 
-2. Déploiement
+## 2. Déploiement
 
 Sur notre serveur nous utilisons le docker-compose suivant afin de déployer la stack mongo + node:
 
@@ -168,11 +168,11 @@ Ce qu’il faut surtout retenir ici c’est que pour le service node nous utilis
     image: registry.domain.com/project:develop
 ```
 
-1. Automatisation de la mise à jour du container
+## 3. Automatisation de la mise à jour du container
 
 Nous allons utiliser un service appelé Ouroboros: ce service va pouvoir surveiller périodiquement les containers qu’on lui précisera afin de les mettre à jour avec la version la plus récente de l’image sur le registry.
 
-![Ouroboros logo](/images/automatiser-deploiement-gitlab-ouroboros/ouroboros_logo.jpeg)
+![Ouroboros logo](https://m4nu56.dev/images/automatiser-deploiement-gitlab-ouroboros/ouroboros_logo.jpeg)
 
 [github gist docker-compose.yml](https://gist.github.com/m4nu56/99211267da89a816a51d4b1295993c4a#file-docker-compose-yml)
 
@@ -219,13 +219,13 @@ Nous lui précisons de surveiller le container ‘nodejs’: MONITOR=nodejs. Afi
 Je vous encourage a aller voir la documentation d’Ouroboros afin de pouvoir tester le bon fonctionnement de votre config avant de démarrer le service sur votre serveur.
 Ouroboros utilise un service de notification très complet appelé **Apprise** qui permet une intégration avec une grande variété de services. Vous voyez ici une implémentation avec **Slack**. Une notification est envoyée sur le channel configuré pour prévenir dès qu’un container à été mis à jour
 
-![Ouroboros slack notification](/images/automatiser-deploiement-gitlab-ouroboros/ouroboros_slack.png)
+![Ouroboros slack notification](https://m4nu56.dev/images/automatiser-deploiement-gitlab-ouroboros/ouroboros_slack.png)
 
 *Tip*: Nous avons dû upgrade la version de docker de notre serveur afin de pouvoir faire fonctionner le service, en 18.x une erreur lors de l’authentification sur notre registry empêchait le bon fonctionnement.
 
 Une fois démarrée le service avec un `docker-compose up -d` vous pourrez voir le système mettre à jour votre container suivant l’interval que vous aurez configurer.
 
-![Ouroboros working](/images/automatiser-deploiement-gitlab-ouroboros/ouroboros_work.png)
+![Ouroboros working](https://m4nu56.dev/images/automatiser-deploiement-gitlab-ouroboros/ouroboros_work.png)
 
 ---
 
