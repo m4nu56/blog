@@ -7,12 +7,12 @@ export default function Home({ allPostsData }) {
   return (
     <React.Fragment>
       <section>
-        <h2>Welcome</h2>
+        <h2>Welcome, my name is Manu !</h2>
         <p>I'm a enthusiast Web Developer. I've been working with Java for about 10 years and I've been really serious with JavaScript for 2 years now.
-          I love to learn and here on this blog I will share some of my experiments successful and also my failures..</p>
+          I love to learn and here on this blog I will share some of my dev experiments</p>
       </section>
 
-      <section className={'pt-10'}>
+      <section>
         <ul>
           {allPostsData.map(({ id, publishDate, title }) => (
             <li key={id} className={'mt-5'}>
