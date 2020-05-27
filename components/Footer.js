@@ -1,5 +1,5 @@
 import React from 'react'
-import { FaLinkedin, FaGithub, FaTwitter } from 'react-icons/fa';
+import { FaLinkedin, FaGithub, FaTwitter, FaDev, FaMedium } from 'react-icons/fa';
 import Link from 'next/link';
 
 
@@ -10,7 +10,9 @@ const socials = [
         href: 'https://linkedin.com/in/emmanuelbalpe',
         icon: <FaLinkedin size={'2em'} />,
         title: 'LinkedIn',
-    }
+    },
+    { href: 'https://dev.to/m4nu56', icon: <FaDev size={'2em'} />, title: 'DEV.to' },
+    { href: 'https://medium.com/@mnu', icon: <FaMedium size={'2em'} />, title: 'Medium' },
 ]
 
 export default function Footer() {
