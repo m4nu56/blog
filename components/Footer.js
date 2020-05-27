@@ -15,7 +15,7 @@ const socials = [
 
 export default function Footer() {
     return (
-        <div style={{ textAlign: 'center' }}>
+        <div className={ 'text-center mt-10' }>
             {socials.map(({ title, href, icon }) =>
                 <div key={title} style={{
                     display: 'inline-block',

@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import styles from './layout.module.css'
-import utilStyles from '../styles/utils.module.css'
 import Link from 'next/link'
 import Footer from './Footer'
 
@@ -9,7 +8,7 @@ export const siteTitle = 'Personal dev blog'
 
 export default function Layout({ children, home }) {
   return (
-    <div className={styles.container}>
+    <div className={'container'}>
       <Head>
         <link rel="icon" href="/favicon.ico" />
         <meta
@@ -25,34 +24,36 @@ export default function Layout({ children, home }) {
         <meta name="og:title" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      <header className={styles.header}>
+      <header className={'container'}>
         {home ? (
           <>
             <img
               src="/images/profile.png"
-              className={`${styles.headerHomeImage} ${utilStyles.borderCircle}`}
+              className={`rounded-full mx-auto`}
+              style={{ maxWidth: '10rem' }}
               alt={name}
             />
-            <h1 className={utilStyles.heading2Xl}>{name}</h1>
+            <h1 className={''}>{name}</h1>
           </>
         ) : (
-              <Link href="/">
-                <a>
-                  <img
-                    src="/images/profile.png"
-                    className={`${styles.headerImage} ${utilStyles.borderCircle}`}
-                    alt={name}
-                  />
-                </a>
-              </Link>
+            <Link href="/">
+              <a>
+                <img
+                  src="/images/profile.png"
+                  className={`rounded-full mx-auto`}
+                  style={{ maxWidth: '6rem' }}
+                  alt={name}
+                />
+              </a>
+            </Link>
           )}
       </header>
 
-      
+
       <main>{children}</main>
 
       {!home && (
-        <div className={styles.backToHome}>
+        <div className={'mt-10'}>
           <Link href="/">
             <a>← Back to home</a>
           </Link>

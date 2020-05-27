@@ -1,4 +1,4 @@
-import utilStyles from '../styles/utils.module.css'
+import styles from './index.module.css'
 import { getSortedPostsData } from '../lib/posts'
 import Link from 'next/link'
 import Date from '../components/date'
@@ -6,19 +6,21 @@ import Date from '../components/date'
 export default function Home({ allPostsData }) {
   return (
     <React.Fragment>
-      <section className={utilStyles.headingMd}>
-        <p>Fullstack Web Developer. Curious and eager to learn. Obsessed with code quality and clean code. Love to DevOps (thank's docker) but still very bad at it ;)</p>
+      <section>
+        <h2>Welcome, my name is Manu !</h2>
+        <p>I'm a enthusiast Web Developer. I've been working with Java for about 10 years and I've been really serious with JavaScript for 2 years now.
+          I love to learn and here on this blog I will share some of my dev experiments</p>
       </section>
 
-      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
-        <ul className={utilStyles.list}>
+      <section>
+        <ul>
           {allPostsData.map(({ id, publishDate, title }) => (
-            <li className={utilStyles.listItem} key={id}>
+            <li key={id} className={'mt-5'}>
               <Link href="/posts/[id]" as={`/posts/${id}`}>
-                <a>{title}</a>
+                <a className={styles.blogTitle}>{title}</a>
               </Link>
               <br />
-              <small className={utilStyles.lightText}>
+              <small>
                 <Date dateString={publishDate} />
               </small>
             </li>
