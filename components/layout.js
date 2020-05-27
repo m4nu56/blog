@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import styles from './layout.module.css'
-import utilStyles from '../styles/utils.module.css'
 import Link from 'next/link'
 import Footer from './Footer'
 
@@ -54,7 +53,7 @@ export default function Layout({ children, home }) {
       <main>{children}</main>
 
       {!home && (
-        <div className={styles.backToHome}>
+        <div className={'mt-10'}>
           <Link href="/">
             <a>← Back to home</a>
           </Link>
