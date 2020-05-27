@@ -13,6 +13,7 @@ I also discovered [Tailwind CSS](https://tailwindcss.com/) that I wanted to try 
 - Build a theme for the website to make it more attractive :-°
 - Integrate twitter feed with last tweets
 - Add a search functionnality
+- Add a "Correct this blog post on GitHub" button 
 
 Some of my posts are also available on [Medium](https://medium.com/@mnu)
 
