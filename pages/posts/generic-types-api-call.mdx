@@ -1,0 +1,146 @@
+export const meta = { 
+    title: "Using Generic Types in Java to create a method that will handle any API call", 
+    tags: ["java", "generic type"], 
+    publishDate: "2020-05-29", 
+    modifiedDate: false, 
+    seoDescription: null, 
+    exclude: false 
+};
+
+# Using Generic Types in Java to create a method that will handle any API call
+
+In a project I'm working on we are making a lot of call to the same API. This API has a custom way to handle errors, 
+it always return a JSON object with the error code and a message explaining the problem (with correct HTTP status of course).
+
+So we were constantly copying and pasting the code fragment that handle checking for HTTP Status and parsing the return JSON in the `ErrorMessage` object or in the expected return format.
+
+I decided to create a new class that would handle this for us. 
+
+## What we were doing
+
+Any of our API calls consisted in this kind of method: 
+
+ ```java
+ public List<MyReturnObject> getEcheanceJambe(PostedObject postedObject) throws ApiException {
+
+    Response response;
+    String   apiMethodPath = "method/path";
+
+    try {
+        Client client = new HttpClientBuilder().createHttpClientWithProxy();
+
+        response = client.target(URL_API)
+                .path(apiMethodPath)
+                .request()
+                .header(HttpHeaders.AUTHORIZATION, AUTHENTIFICATION_SCHEME + " " + user.getToken())
+                .post(Entity.entity(postedObject, MediaType.APPLICATION_JSON_TYPE));
+
+    }
+    catch (Exception t) {
+        ApiExceptionNetwork apiException = new ApiExceptionNetwork(t, URL_API + "/" + apiMethodPath);
+        logger.error(apiException);
+        throw apiException;
+    }
+
+    try {
+
+        response.bufferEntity();
+
+        List<Integer> successStatuses = ImmutableList.of(Response.Status.OK.getStatusCode(), Response.Status.ACCEPTED.getStatusCode());
+        if (successStatuses.contains(response.getStatus())) {
+            return response.readEntity(new GenericType<ArrayList<MyReturnObject>>() {});
+        }
+        else {
+            ErrorMessage errorMessage = response.readEntity(ErrorMessage.class);
+            throw new ApiException(errorMessage);
+        }
+    } catch (ApiException e) {
+        throw e;
+    }
+    catch (Exception t) {
+        ApiException apiException = new ApiExceptionUncaught(t, response.getStatus(), URL_API + "/" + apiMethodPath);
+        logger.error(apiException);
+        throw apiException;
+    }
+}
+```
+
+ As you can see:
+ 1. first we handle the call to the API surrounded by try/catch because it can generate an error if parameters are incompatible for instance. 
+ 2. then we read the response of the API and parse it with the expected `MyReturnObject` class or the error `ErrorMessage` class. 
+
+ It's a lot of code just to handle an API call correctly. 
+
+ ## ApiService class
+
+ The same code has been encapsulated in a new class where it accepts any kind of input parameter: `Object entity` 
+ and any kind of return type thank's to the `GenericType<T> returnType`. 
+
+```java
+ public class ApiService<T> {
+
+    private final GenericType<T> returnType;
+
+    public ApiService(GenericType<T> returnType) {
+        this.returnType = returnType;
+    }
+
+    public T makePost(String apiPath, String apiMethodPath, String token, Object entity) throws ApiException {
+        Response response;
+
+        try {
+
+            Client client = ClientBuilder.newClient();
+
+            response = client
+                .target(apiPath)
+                .path(apiMethodPath)
+                .request()
+                .header(HttpHeaders.AUTHORIZATION, AUTHENTICATION_SCHEME + " " + token)
+                .post(Entity.entity(entity, MediaType.APPLICATION_JSON_TYPE));
+
+        } catch (Exception t) {
+            ApiExceptionNetwork apiException = new ApiExceptionNetwork(t, apiPath + "/" + apiMethodPath);
+            logger.error(apiException);
+            throw apiException;
+        }
+
+        String jsonReceived = null;
+        try {
+            response.bufferEntity();
+            List<Integer> successStatuses = ImmutableList.of(Response.Status.OK.getStatusCode(), Response.Status.ACCEPTED.getStatusCode());
+            if (successStatuses.contains(response.getStatus())) {
+                return response.readEntity(returnType);
+            } else {
+                logApiError(apiPath, apiMethodPath, response);
+
+                ErrorMessage errorMessage = response.readEntity(ErrorMessage.class);
+                jsonReceived = response.readEntity(String.class);
+                throw new ApiException(errorMessage);
+            }
+        } catch (ApiException e) {
+            throw e;
+        } catch (Exception t) {
+            ApiException apiException = new ApiExceptionUncaught(t, response.getStatus(), apiPath + "/" + apiMethodPath, jsonReceived);
+            logger.error("API returned : " + response.getStatus() + " with URL " + apiPath + "/" + apiMethodPath, apiException);
+            throw apiException;
+        }
+    }
+    ...
+}
+```
+
+It can then be used like this in our codebase: 
+
+```java
+GenericType<ArrayList<MyReturnObject>> myReturnObjectGenericType = new GenericType<ArrayList<MyReturnObject>>() {};
+return new ApiService<>(myReturnObjectGenericType).makePost(
+    URL_API,
+    "method/path",
+    user.getToken(),
+    message
+);
+```
+
+You can find the full gist on my GitHub: [https://gist.github.com/m4nu56/6bf0362be98550fd5806043eb22684af](https://gist.github.com/m4nu56/6bf0362be98550fd5806043eb22684af)
+
