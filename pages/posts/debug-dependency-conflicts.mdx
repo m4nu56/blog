@@ -1,0 +1,38 @@
+export const meta = { 
+    title: "Debug dependency conflicts", 
+    tags: ["java", "maven"], 
+    publishDate: "2020-06-01", 
+    modifiedDate: false, 
+    seoDescription: null, 
+    exclude: false 
+};
+
+# Debug dependency conflicts
+
+Just a quick tip to help debug a problem with dependencies in a Java project. 
+
+Sometimes adding a new dependency to your project can put a mess if this new dependency comes with other sub-dependencies that take the priority on the version you wanted to use. 
+
+You can add the following to print the jar that is being used to access a class: 
+
+```java
+ClassLoader classLoader = KeycloakLoginService.class.getClassLoader();
+URL resource = classLoader.getResource("org/apache/http/message/BasicLineFormatter.class");
+System.out.println(resource);
+```
+
+If needed you can then intervene on your Maven dependency to exclude the problematic dependency: 
+
+```xml
+ <dependency>
+    <groupId>org.apache.axis2</groupId>
+    <artifactId>axis2-transport-http</artifactId>
+    <version>${axis2.version}</version>
+    <exclusions>
+        <exclusion>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+```
