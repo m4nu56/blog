@@ -9,9 +9,30 @@ export const meta = {
 
 # Debug dependency conflicts
 
-Just a quick tip to help debug a problem with dependencies in a Java project. 
+Some quick tips to help debug a problem with dependencies in a Java project. 
 
 Sometimes adding a new dependency to your project can put a mess if this new dependency comes with other sub-dependencies that take the priority on the version you wanted to use. 
+
+## Find all the dependencies used in your Maven project
+
+You can run: `mvn dependency:tree` to list a tree of all dependencies of your Maven project.
+Simply add a grep to find what you're looking for: 
+
+```bash
+m4nu56@m4nu56:~/projects/myproject/src$ mvn dependency:tree | grep -B 4 bouncy
+[INFO] +- org.apache.commons:commons-lang3:jar:3.7:compile
+[INFO] +- org.apache.commons:commons-text:jar:1.4:compile
+[INFO] +- com.google.code.gson:gson:jar:2.8.4:compile
+[INFO] +- com.lowagie:itext:jar:2.1.7:compile
+[INFO] |  +- bouncycastle:bcmail-jdk14:jar:138:compile
+[INFO] |  +- bouncycastle:bcprov-jdk14:jar:138:compile
+[INFO] |  \- org.bouncycastle:bctsp-jdk14:jar:1.38:compile
+[INFO] |     +- org.bouncycastle:bcprov-jdk14:jar:1.38:compile
+[INFO] |     \- org.bouncycastle:bcmail-jdk14:jar:1.38:compile
+```
+
+
+## Find which jar is running your class
 
 You can add the following to print the jar that is being used to access a class: 
 
@@ -20,6 +41,8 @@ ClassLoader classLoader = KeycloakLoginService.class.getClassLoader();
 URL resource = classLoader.getResource("org/apache/http/message/BasicLineFormatter.class");
 System.out.println(resource);
 ```
+
+## Exclude a sub dependency from one of your maven dependency 
 
 If needed you can then intervene on your Maven dependency to exclude the problematic dependency: 
 
