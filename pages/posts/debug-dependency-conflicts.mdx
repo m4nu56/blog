@@ -16,10 +16,9 @@ Sometimes adding a new dependency to your project can put a mess if this new dep
 ## Find all the dependencies used in your Maven project
 
 You can run: `mvn dependency:tree` to list a tree of all dependencies of your Maven project.
-Simply add a grep to find what you're looking for: 
 
 ```bash
-m4nu56@m4nu56:~/projects/myproject/src$ mvn dependency:tree | grep -B 4 bouncy
+m4nu56@m4nu56:~/projects/myproject/src$ mvn dependency:tree -Dverbose -Dincludes=org.bouncycastle
 [INFO] +- org.apache.commons:commons-lang3:jar:3.7:compile
 [INFO] +- org.apache.commons:commons-text:jar:1.4:compile
 [INFO] +- com.google.code.gson:gson:jar:2.8.4:compile
