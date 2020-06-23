@@ -1,0 +1,57 @@
+export const meta = { 
+    title: 'Ajout d''une dépendance externe non disponible sur un central repository', 
+    tags: ["maveb"], 
+    publishDate: "2020-06-23", 
+    modifiedDate: false, 
+    seoDescription: "", 
+    exclude: false 
+};
+
+# Ajout d'une dépendance externe non disponible sur un central repository
+
+Dans certains cas une dépendance peut être nécessaire à votre projet Maven et elle n'est disponible sur aucun repository central.
+L'idéal dans ce cas est de l'ajouter au Nexus ou Artifactory lié au projet mais comment faire lorsqu'il n'y en a pas ? 
+
+La commande `mvn install:install-file` permet de résoudre ce problème: 
+
+```bash
+mvn install:install-file 
+    -DlocalRepositoryPath=lib 
+    -DcreateChecksum=true 
+    -Dpackaging=jar 
+    -Dfile=external_jar.jar 
+    -DgroupId=com.group.id 
+    -DartifactId=external.artifact.id 
+    -Dversion=2.1
+```
+
+Si le JAR a été construit avec Apache Maven, il contiendra un pom.xml dans un sous dossier META-INF
+et on peut directement lancer: 
+
+```bash
+mvn install:install-file 
+        -Dfile=filename.jar
+        -DlocalRepositoryPath=lib
+```
+
+Ajouter le repository local au pom.xml
+
+```xml
+<repositories>
+    <repository>
+        <id>Internal repository</id>
+        <url>file://${basedir}/lib</url>
+    </repository>
+</repositories>
+```
+
+Puis on peut référencer le jar comme n'importe quelle autre dépendance
+
+```xml
+<dependency>
+    <groupId>com.group.id</groupId>
+    <artifactId>external.artifact.id</artifactId>
+    <version>2.1</version>
+</dependency>
+```
+
