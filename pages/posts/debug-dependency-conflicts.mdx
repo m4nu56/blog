@@ -18,7 +18,7 @@ Sometimes adding a new dependency to your project can put a mess if this new dep
 You can run: `mvn dependency:tree` to list a tree of all dependencies of your Maven project.
 
 ```bash
-m4nu56@m4nu56:~/projects/myproject/src$ mvn dependency:tree -Dverbose -Dincludes=org.bouncycastle
+m4nu56@m4nu56:~/projects/myproject/src$ mvn dependency:tree -Dverbose -Ddetail=true -Dincludes=org.bouncycastle
 [INFO] +- org.apache.commons:commons-lang3:jar:3.7:compile
 [INFO] +- org.apache.commons:commons-text:jar:1.4:compile
 [INFO] +- com.google.code.gson:gson:jar:2.8.4:compile
@@ -29,6 +29,8 @@ m4nu56@m4nu56:~/projects/myproject/src$ mvn dependency:tree -Dverbose -Dincludes
 [INFO] |     +- org.bouncycastle:bcprov-jdk14:jar:1.38:compile
 [INFO] |     \- org.bouncycastle:bcmail-jdk14:jar:1.38:compile
 ```
+
+In extreme cases you can add the `-X` argument to obtain even more debug information. 
 
 
 ## Find which jar is running your class
