@@ -2,11 +2,22 @@ import Head from 'next/head'
 import styles from './layout.module.css'
 import Link from 'next/link'
 import Footer from './Footer'
+import { useEffect } from 'react'
+import { initGA, logPageView } from "./googleAnalytics.js"
 
 const name = 'm4nu56'
 export const siteTitle = 'Personal dev blog'
 
 export default function Layout({ children, home }) {
+
+  useEffect(() => {
+    if (!window.GA_INITIALIZED) {
+      initGA()
+      window.GA_INITIALIZED = true
+    }
+    logPageView()
+  }, [])
+
   return (
     <div className={'container'}>
       <Head>
