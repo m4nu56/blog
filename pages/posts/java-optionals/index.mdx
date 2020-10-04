@@ -1,10 +1,10 @@
-export const meta = { 
-    title: "Java Optionals", 
-    tags: ["java"], 
-    publishDate: "2020-05-22", 
-    modifiedDate: false, 
-    seoDescription: null, 
-    exclude: true 
+export const meta = {
+    title: "Java Optionals",
+    tags: ["java"],
+    publishDate: "2020-10-04",
+    modifiedDate: false,
+    seoDescription: null,
+    exclude: false
 };
 
 # Java Optionals
@@ -19,4 +19,41 @@ if(myVar != null){
 
 ```java
 Optional.ofNullable(myVar).ifPresent(var -> logger.info("MyVar=" + var));
+```
+
+So we all have a lot of terner expression like that in our codebases:
+
+```java
+contrat.getDate() != null ? contrat.getDate().toString() : "";
+```
+
+You can now simplify this with:
+
+```java
+Optional.ofNullable(contrat.getDate()).map(LocalDate::toString).orElse("");
+```
+
+# String null or empty
+
+```java
+Optional.ofNullable(myString).orElse("value was null");
+```
+
+```java
+Optional.ofNullable(myString).ifPresent(s -> System.out.println(s));
+```
+
+```java
+Optional.ofNullable(myString).orElseThrow(() -> new RuntimeException("value was null"));
+```
+
+And to test if it is null or empty you can use Apache `org.apache.commons.lang3` library that gives you the following methods:
+
+- `StringUtils.isEmpty(String) / StringUtils.isNotEmpty(String)`: It tests if the String is null or empty (" " is not empty)
+- `StringUtils.isBlank(String) / StringUtils.isNotBlank(String)`: Same as isEmpty bt if the String is only whitespace it is considered blank
+
+And applied to `Optional` you get:
+
+```java
+Optional.ofNullable(myString).filter(StringUtils::isNotEmpty).orElse("value was null or empty");
 ```
