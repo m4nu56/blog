@@ -8,13 +8,13 @@ require("prismjs/components/prism-javastacktrace");
 import theme from "prism-react-renderer/themes/palenight";
 
 export default ({ children, className }) => {
-    const language = className.replace(/language-/, '')
+    const language = className ? className.replace(/language-/, '') : 'text'
     return (
         <Highlight {...defaultProps} theme={theme} code={children} language={language}>
             {({ className, style, tokens, getLineProps, getTokenProps }) => (
                 <pre className={className} style={{ ...style, padding: '20px',  overflowX: 'auto' }}>
-                    {tokens.map((line, i) => (
-                        <div key={i} {...getLineProps({ line, key: i })}>
+                    {tokens.filter((line, i) => i < tokens.length-1).map((line, i) => (
+                        <div key={i} data-key={i} {...getLineProps({ line, key: i })}>
                             {line.map((token, key) => (
                                 <span key={key} {...getTokenProps({ token, key })} />
                             ))}

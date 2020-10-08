@@ -1,0 +1,60 @@
+export const meta = {
+  title: "Update a PostgreSQL table using a WITH query",
+  tags: ["sql"],
+  publishDate: "2020-10-05",
+  modifiedDate: false,
+  seoDescription: null,
+  exclude: false
+};
+
+# Update a PostgreSQL table using a WITH query
+
+I often need to update a table using values from a different table and most of the time the quickest and also dirtiest solution is simply to do a subquery.
+A better and cleaner solution is to use the [UPDATE .. SET .. FROM](https://www.postgresql.org/docs/9.1/sql-update.html):
+
+Let's describe our case with an example:
+
+I have a table `journey_pattern` in which I need to update the name based on the name of its line. I can find the line by joining 2 other tables: `routes` and `lines`.
+
+Using a subquery I can simply do:
+
+```sql
+UPDATE journey_patterns p SET name = (
+    SELECT l.name
+    FROM journey_patterns jp
+             JOIN routes r ON jp.route_id = r.id
+             JOIN lines l ON r.line_id = l.id
+    WHERE l.name IS NOT NULL
+      AND l.name <> ''
+    AND jp.id = p.id
+) || ' - ' || name
+```
+
+But what if `lines.name` is empty or null ? I need to check that case using a `CASE .. THEN .. ELSE .. END`. The inline subquery will end up being quite difficult to read.
+
+As you can see on the Postgresql UPDATE documentation, we can use a [WITH QUERY](https://www.postgresql.org/docs/9.1/queries-with.html) to update our table:
+
+![postgresql_update](/images/update-with-join-postgresql/postgresql_update.png)
+
+
+So in our case:
+
+```sql
+WITH line_journey_pattern AS (
+    SELECT jp.id AS journey_pattern_id, l.name AS line_name
+    FROM journey_patterns jp
+             JOIN routes r ON jp.route_id = r.id
+             JOIN lines l ON r.line_id = l.id
+    WHERE l.name IS NOT NULL
+      AND l.name <> ''
+)
+UPDATE journey_patterns jp
+SET name = ljp.line_name || ' - ' || jp.name
+FROM line_journey_pattern ljp
+WHERE ljp.journey_pattern_id = jp.id;
+```
+
+The `WITH` statement is used to regroup a `journey_pattern` with a `lines.name` and we only return line names being not null and not empty.
+We can then do a `UPDATE .. SET .. FROM .. WHERE` to update our `journey_pattern.name`.
+
+And the cherry is that this update is done only when `lines.name` is set.
