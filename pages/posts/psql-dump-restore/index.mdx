@@ -1,60 +1,123 @@
 export const meta = {
-  title: "Update a PostgreSQL table using a WITH query",
+  title: "Backup and restore postgres databases using cli tools",
   tags: ["sql"],
   publishDate: "2020-10-05",
   modifiedDate: false,
   seoDescription: null,
-  exclude: false
+  exclude: true
 };
 
-# Update a PostgreSQL table using a WITH query
+# Backup and restore postgres databases using cli tools
 
-I often need to update a table using values from a different table and most of the time the quickest and also dirtiest solution is simply to do a subquery.
-A better and cleaner solution is to use the [UPDATE .. SET .. FROM](https://www.postgresql.org/docs/9.1/sql-update.html):
+As usual [PostgreSQL documentation](https://www.postgresql.org/docs/9.1/app-pgdump.html) is very well designed and you can find info of all the tools one can use to backup and restore databases as well as a lot of examples.
 
-Let's describe our case with an example:
+This post is more of a quick reminder of the most common script I use on a daily basis. You won't find an exhaustive list of all available options.
 
-I have a table `journey_pattern` in which I need to update the name based on the name of its line. I can find the line by joining 2 other tables: `routes` and `lines`.
+## How to backup a database
 
-Using a subquery I can simply do:
-
-```sql
-UPDATE journey_patterns p SET name = (
-    SELECT l.name
-    FROM journey_patterns jp
-             JOIN routes r ON jp.route_id = r.id
-             JOIN lines l ON r.line_id = l.id
-    WHERE l.name IS NOT NULL
-      AND l.name <> ''
-    AND jp.id = p.id
-) || ' - ' || name
+```bash
+pg_dump dbname -h localhost -U username -n schema_name -O -v -b -Fc > /path/to/backup/file.backup
 ```
 
-But what if `lines.name` is empty or null ? I need to check that case using a `CASE .. THEN .. ELSE .. END`. The inline subquery will end up being quite difficult to read.
+- `-h` or `--host` where is running the postgres server
+- `-U` or `--username` to specify the user
+- `-n` or `--schema` to specify the schema. You can select multiple schemas by duplicating the `-n` option. If the schema depends on objects in other schemas those will not be backup. Blob as well are not backup unless you add the `--blobs switch`
+- `-b` or `--blobs` backup blob data
+- `-O` or `--no-owner` to discard original ownership of the objects in the backup file
+- `-v` or `--verbose` verbose mode
+- `-Fc` or `format=c` format custom. Use this mode when you need a compressed file. This format can be restored using `pg_restore`. If format is not specified it will be a plain SQL script by default.
 
-As you can see on the Postgresql UPDATE documentation, we can use a [WITH QUERY](https://www.postgresql.org/docs/9.1/queries-with.html) to update our table:
-
-![postgresql_update](/images/update-with-join-postgresql/postgresql_update.png)
-
-
-So in our case:
-
-```sql
-WITH line_journey_pattern AS (
-    SELECT jp.id AS journey_pattern_id, l.name AS line_name
-    FROM journey_patterns jp
-             JOIN routes r ON jp.route_id = r.id
-             JOIN lines l ON r.line_id = l.id
-    WHERE l.name IS NOT NULL
-      AND l.name <> ''
-)
-UPDATE journey_patterns jp
-SET name = ljp.line_name || ' - ' || jp.name
-FROM line_journey_pattern ljp
-WHERE ljp.journey_pattern_id = jp.id;
+Or:
+```bash
+pg_dump --file "/path/to/backup/file.backup"
+    --host=localhost
+    --username "userName"
+    --no-password
+    --verbose
+    --format=c
+    --blobs
+    --no-owner
+    --schema bre_anren_2020_2021
+    dbname
 ```
 
-The `WITH` statement is used to regroup a `journey_pattern` with a `lines.name` and we only return line names being not null and not empty.
-We can then do a `UPDATE .. SET .. FROM .. WHERE` to update our `journey_pattern.name`.
+## Restore using pg_restore
 
-And the cherry is that this update is done only when `lines.name` is set.
+To restore a backup generated with the `-Fc` format option:
+
+```bash
+pg_restore --host=localhost -U username -d dbname -Fc -v < /path/to/backup/file.backup
+```
+
+- `--host` where is running the postgres server
+- `-U` or `--username` to specify the user
+- `-d` name of the database
+
+
+## Restore using psql
+
+Todo
+
+## Note on using it with docker
+
+Most of the time I'm using these tools on a Docker container. You simply need to execute it with:
+
+```bash
+docker exec -i container_name pg_dump dbname > /path/to/backup/file.backup
+```
+
+`/path/to/backup/file.backup` will be in the container so one way to download it would be to volume the directory with your host.
+Or use: `docker cp <containerName>:/path/to/backup/file.backup /host/path/`
+
+
+## Restore a backup without running the refresh of the materialized view
+
+The solution consists in extracting from your backup the list the table of contents with the `-l` or `--list` option.
+Altering this list of contents to remove the refresh of the views.
+And then launching the backup using the table of contents as parameter with the `-L` or `--list-file` option.
+
+```bash
+# backup in custom format
+pg_dump database -Fc backup.dump
+
+# generate the table of contents and remove MATERIALIZED VIEW DATA
+pg_restore -l backup.dump | sed '/MATERIALIZED VIEW DATA/d' > refresh.lst
+
+# restore using the table of contents as parameter
+pg_restore -L refresh.lst -d database backup.dump
+
+# generate the table of contents with only the materialized view data
+pg_restore -l backup.dump | grep 'MATERIALIZED VIEW DATA' > refresh.lst
+
+# restore the backup executing only the refresh of the materialized views
+pg_restore -L refresh.lst -d database backup.dump
+```
+
+If you need to restore it on a docker container the list file must be on the container.
+You need to copy it on the container before running the pg_restore command.
+
+```bash
+# generate the table of contents and remove MATERIALIZED VIEW DATA
+# using your host `pg_restore`
+pg_restore -l backup.dump | sed '/MATERIALIZED VIEW DATA/d' > refresh.lst
+
+# copy the table of contents file on the container
+docker cp refresh.lst containerName:/tmp
+
+# restore the backup executing only the refresh of the materialized views
+# on your running container `containerName`
+docker exec -i containerName pg_restore -L /tmp/refresh.lst -U username -d database -Fc -v /host/path/backup.dump
+```
+
+Source: [https://gist.github.com/kmatt/14c8e6ae2cff9e4faa0e](https://gist.github.com/kmatt/14c8e6ae2cff9e4faa0e)
+
+## Disconnect all client before doing a restore
+
+If you need to restore a database on a database that is actively used you'll need to disconnect all clients before doing so:
+
+```sql
+SELECT pg_terminate_backend(pg_stat_activity.pid)
+FROM pg_stat_activity
+WHERE pg_stat_activity.datname = 'dbname'
+AND pid <> pg_backend_pid();
+```
