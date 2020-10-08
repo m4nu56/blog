@@ -1,0 +1,120 @@
+export const meta = {
+    title: "Setting up local git config to use a different user in personal and work projects",
+    tags: ["git"],
+    publishDate: "2020-10-08",
+    modifiedDate: false,
+    seoDescription: null,
+    exclude: false
+};
+
+# Setting up local git config to use a different user in personal and work projects
+
+So it's never too late to discover basic config usage of your daily tools I guess.. 
+I sometimes need to push changes on both work and personal related repositories. And of course I don't want to be using the same email to identify myself on those respositories. 
+
+## Format
+
+Git uses configuration file to manage all of its possible configuration options. 
+The format of this file is [INI](https://en.wikipedia.org/wiki/INI_file) and it can be structured with keys and sections: 
+
+```ini
+name=value
+```
+
+```ini
+[section]
+a=a
+b=b
+```
+
+## Configuration scopes
+
+3 scopes are available to personalize the configuration of your projects: 
+- local
+  Local options are automatically created when you initialize a git repository with `git init` in `.git/config`
+- global
+  Global options are located in your user home directory `~/.gitconfig`
+- system
+  System options are stores in `/etc/gitconfig`. It exists only if you set up system variables. 
+
+Git will take properties from the local scope in priority, then global if they do not exists in local and then in system. 
+
+
+## Displaying options
+
+You can use `git config --list --show-origin` in one of your repository to display all git configuration variables set. 
+
+`--show-origin` will give you the info from where one particular option is set. 
+
+```bash
+$ git config --list --show-origin
+file:/home/user/.gitconfig    user.name=User Name
+file:/home/user/.gitconfig    user.email=Email
+file:/home/user/.gitconfig    core.autocrlf=input
+file:/home/user/.gitconfig    pull.rebase=true
+file:.git/config        core.ignorecase=true
+...
+```
+
+In this example you can see that variables: 
+- user.name
+- user.email
+- core.autocrlf
+- pull.rebase
+Are set globally on my `~/.gitconfig` ini file.
+
+and variable:
+- core.ignorecase 
+is only set in the project `.git/config` ini file.
+
+
+## Setting up a different config depending on path
+
+An option of git config [includeIf](https://git-scm.com/docs/git-config#_conditional_includes) allow us to personalize the config file to use depending on: 
+- `gitdir`: a path
+- `gitdir/i`: a path but with case insensitive match
+- `onbranch`: a branch
+
+So in my case I wanted to use by default my work configuration and for projects located in `~/projects/perso/` I want to use my personal email. 
+
+My global config file in `~/.gitconfig` contains: 
+
+```ini
+[user]
+	name = Emmanuel Balpe
+	email = mywork@email.com
+	useConfigOnly = true
+[gc]
+	autoDetach = false
+[core]
+	autocrlf = input
+	fileMode = false
+[pull]
+	rebase = true
+[includeIf "gitdir:~/projects/perso/"]
+	path = ~/.git/.gitconfig-perso
+```
+
+Notice the path `~/projects/perso/`, trailing `/` is important.
+
+I created a config file in `~/.git/.gitconfig-perso` containing my personal info: 
+
+```ini
+[user]
+	name = Emmanuel Balpe
+	email = m4nu56@gmail.com
+```
+
+```bash
+$ git config --list --show-origin
+file:/home/user/.gitconfig    user.name=Emmanuel Balpe
+file:/home/user/.gitconfig    user.email=mywork@email.com
+file:/home/user/.gitconfig    user.useconfigonly=true
+file:/home/user/.gitconfig    gc.autodetach=false
+file:/home/user/.gitconfig    core.autocrlf=input
+file:/home/user/.gitconfig    core.filemode=false
+file:/home/user/.gitconfig    pull.rebase=true
+file:/home/user/.gitconfig    includeif.gitdir:~/projects/perso/.path=~/.git/.gitconfig-perso
+```
+
+So now when I push in any repository inside `~/projects/perso` I'm using my personal git config. 
