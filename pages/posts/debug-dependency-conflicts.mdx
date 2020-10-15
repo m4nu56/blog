@@ -1,17 +1,17 @@
-export const meta = { 
-    title: "Debug dependency conflicts", 
-    tags: ["java", "maven"], 
-    publishDate: "2020-06-01", 
-    modifiedDate: false, 
-    seoDescription: null, 
-    exclude: false 
+export const meta = {
+    title: "Debug dependency conflicts",
+    tags: ["java", "maven"],
+    publishDate: "2020-06-01",
+    modifiedDate: "2020-10-15",
+    seoDescription: null,
+    exclude: false
 };
 
 # Debug dependency conflicts
 
-Some quick tips to help debug a problem with dependencies in a Java project. 
+Some quick tips to help debug a problem with dependencies in a Java project.
 
-Sometimes adding a new dependency to your project can put a mess if this new dependency comes with other sub-dependencies that take the priority on the version you wanted to use. 
+Sometimes adding a new dependency to your project can put a mess if this new dependency comes with other sub-dependencies that take the priority on the version you wanted to use.
 
 ## Find all the dependencies used in your Maven project
 
@@ -30,12 +30,16 @@ m4nu56@m4nu56:~/projects/myproject/src$ mvn dependency:tree -Dverbose -Ddetail=t
 [INFO] |     \- org.bouncycastle:bcmail-jdk14:jar:1.38:compile
 ```
 
-In extreme cases you can add the `-X` argument to obtain even more debug information. 
+To analyze it more easily you can forward it to a file:
+
+`mvn dependency:tree -Dverbose -Ddetail=true > dependency_tree.txt`
+
+In extreme cases you can add the `-X` argument to obtain even more debug information.
 
 
 ## Find which jar is running your class
 
-You can add the following to print the jar that is being used to access a class: 
+You can add the following to print the jar that is being used to access a class:
 
 ```java
 ClassLoader classLoader = KeycloakLoginService.class.getClassLoader();
@@ -43,9 +47,9 @@ URL resource = classLoader.getResource("org/apache/http/message/BasicLineFormatt
 System.out.println(resource);
 ```
 
-## Exclude a sub dependency from one of your maven dependency 
+## Exclude a sub dependency from one of your maven dependency
 
-If needed you can then intervene on your Maven dependency to exclude the problematic dependency: 
+If needed you can then intervene on your Maven dependency to exclude the problematic dependency:
 
 ```xml
  <dependency>
