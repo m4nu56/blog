@@ -1,10 +1,10 @@
 export const meta = {
   title: "Backup and restore postgres databases using cli tools",
   tags: ["sql"],
-  publishDate: "2020-10-05",
+  publishDate: "2020-10-16",
   modifiedDate: false,
   seoDescription: null,
-  exclude: true
+  exclude: false
 };
 
 # Backup and restore postgres databases using cli tools
@@ -53,10 +53,6 @@ pg_restore --host=localhost -U username -d dbname -Fc -v < /path/to/backup/file.
 - `-U` or `--username` to specify the user
 - `-d` name of the database
 
-
-## Restore using psql
-
-Todo
 
 ## Note on using it with docker
 
