@@ -1,0 +1,35 @@
+export const meta = {
+    title: "Optimize your code by reducing disk access",
+    tags: ["algorithm", "java"],
+    publishDate: "2020-11-03",
+    modifiedDate: false,
+    seoDescription: null,
+    exclude: false
+};
+
+# Optimize your code by reducing disk access
+
+When writing an algorithm that requires informations from a database you should always prefer collecting the required data first in order to feed your code. 
+
+Instead of:
+
+```java
+newCities.forEach(city -> {
+   City cityById = cityDao.findById(city.getId());
+   ...
+});
+```
+
+prefer: 
+
+```java
+List<City> cities = cityDao.findAll();
+newCities.forEach(city -> {
+   City cityById = cities
+                         .stream()
+                         .filter(c -> c.getId().equals(city.getId()))
+                         .findFirst()
+                         .orElseThrow(() -> new RuntimeException("City not found"));
+    ...
+});
+```
