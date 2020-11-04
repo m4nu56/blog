@@ -2,7 +2,7 @@ export const meta = {
     title: "Optimize your code by reducing disk access",
     tags: ["algorithm", "java"],
     publishDate: "2020-11-03",
-    modifiedDate: false,
+    modifiedDate: "2020-11-04",
     seoDescription: null,
     exclude: false
 };
@@ -23,7 +23,7 @@ newCities.forEach(city -> {
 prefer: 
 
 ```java
-List<City> cities = cityDao.findAll();
+List<City> cities = cityDao.find(filter);
 newCities.forEach(city -> {
    City cityById = cities
                          .stream()
@@ -33,3 +33,5 @@ newCities.forEach(city -> {
     ...
 });
 ```
+
+It does not mean you should always load data from your database and then filter it in Java ! Collect only the required data needed by your algorithm when making the database query. 
