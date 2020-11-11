@@ -3,7 +3,8 @@ import styles from './layout.module.css'
 import Link from 'next/link'
 import Footer from './Footer'
 import { useEffect } from 'react'
-import { initGA, logPageView } from "./googleAnalytics.js"
+import { initGA, logPageView } from './googleAnalytics.js'
+import Image from 'next/image'
 
 const name = 'm4nu56'
 export const siteTitle = 'Personal dev blog'
@@ -37,15 +38,17 @@ export default function Layout({ children, home }) {
       </Head>
       <header className={'container'}>
         {home ? (
-          <>
-            <img
+          <div style={{ textAlign: 'center' }}>
+            <Image
               src="/images/profile.png"
               className={`rounded-full mx-auto`}
-              style={{ maxWidth: '10rem' }}
+              // style={{ maxWidth: '10rem' }}
               alt={name}
+              width='50'
+              height='50'
             />
             <h1 className={''}>{name}</h1>
-          </>
+          </div>
         ) : (
             <Link href="/">
               <a>
