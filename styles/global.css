@@ -8,7 +8,7 @@ body {
 }
 
 body {
-  @apply bg-white p-10;
+  @apply bg-white p-2;
 }
 
 h1 {
