@@ -1,15 +1,14 @@
-import styles from './layout.module.scss'
 import Head from 'next/head'
 import Link from 'next/link'
 import Footer from './Footer'
 import React, { useEffect } from 'react'
 import { initGA, logPageView } from './googleAnalytics.js'
-import Image from 'next/image'
+import ProfilePicture from './ProfilePicture'
 
-const name = 'm4nu56'
+export const name = 'm4nu56'
 export const siteTitle = '(Yet) Another personal developer blog'
 
-export default function Layout({ children, home }) {
+export default function Layout ({ children, home }) {
 
   useEffect(() => {
     if (!window.GA_INITIALIZED) {
@@ -37,36 +36,8 @@ export default function Layout({ children, home }) {
         <meta name="twitter:card" content="summary_large_image"/>
       </Head>
       <header className={'container'}>
-        {home ? (
-          <div className={styles.imageContainer}>
-            <Image
-              src="/images/profile.png"
-              alt={name}
-              width={90}
-              height={90}
-              quality={100}
-              className={styles.image}
-            />
-            <h1>{name}</h1>
-          </div>
-        ) : (
-          <div className={styles.imageContainer}>
-            <Link href="/">
-              <a>
-                <Image
-                  src="/images/profile.png"
-                  alt={name}
-                  width={50}
-                  height={50}
-                  quality={100}
-                  className={styles.image}
-                />
-              </a>
-            </Link>
-          </div>
-          )}
+        <ProfilePicture home={home}/>
       </header>
-
 
       <main>{children}</main>
 
@@ -78,7 +49,7 @@ export default function Layout({ children, home }) {
         </div>
       )}
 
-      <Footer />
+      <Footer/>
 
     </div>
   )

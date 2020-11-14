@@ -20,9 +20,7 @@ export default function Home({ allPostsData }) {
             <li key={id} className={styles.listItem}>
               <Link href="/posts/[id]" as={`/posts/${id}`}>
                 <a className={styles.blogTitle}>
-                  <span>
-                  <FaArrowRight size={15}/> {title}
-                  </span>
+                  <span><FaArrowRight size={15}/>{title}</span>
                 </a>
               </Link>
               <small>

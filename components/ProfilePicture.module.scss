@@ -1,0 +1,19 @@
+.figureCentered {
+  @apply text-center;
+}
+
+.imageContainer {
+  width: 120px;
+  height: 120px;
+  perspective: 1500px;
+  @apply mx-auto;
+  img {
+    transform: rotateX(15deg) rotateY(-18deg) rotateZ(3deg);
+    @apply rounded-full;
+    transition: .3s;
+  }
+
+  &:hover img {
+    transform: rotate(0);
+  }
+}
