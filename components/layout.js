@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import styles from './layout.module.css'
 import Link from 'next/link'
 import Footer from './Footer'
 import React, { useEffect } from 'react'
@@ -7,7 +6,7 @@ import { initGA, logPageView } from './googleAnalytics.js'
 import Image from 'next/image'
 
 const name = 'm4nu56'
-export const siteTitle = 'Personal dev blog'
+export const siteTitle = '(Yet) Another personal developer blog'
 
 export default function Layout({ children, home }) {
 
