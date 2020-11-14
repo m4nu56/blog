@@ -12,10 +12,10 @@ body {
 }
 
 h1 {
-  @apply text-4xl text-orange-600 font-extrabold text-center;
+  @apply text-4xl text-orange-800 font-extrabold text-center;
 }
 h2 {
-  @apply text-3xl text-orange-500 font-extrabold text-left;
+  @apply text-3xl text-orange-600 font-extrabold text-left;
 }
 
 a {
