@@ -1,0 +1,21 @@
+.footer {
+    @apply text-center;
+    @apply mt-10;
+}
+
+@mixin icon-hover {
+    @apply text-blue-700;
+    @apply border-0;
+}
+
+.footerLink {
+    @apply inline-block;
+    @apply m-3;
+    @include icon-hover;
+}
+
+.copyrights {
+    @apply flex;
+    @apply justify-between;
+    @apply align-middle;
+}

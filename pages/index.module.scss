@@ -1,0 +1,31 @@
+@mixin blog-item-link {
+    border-collapse: collapse;
+    border-spacing: 0;
+    color: #333;
+    @apply text-xl;
+    line-height: 1.2em;
+    @apply mt-2;
+    span {
+        @apply flex flex-1 items-center;
+        svg {
+            @apply flex-none mr-3;
+        }
+    }
+    &:hover {
+        svg {
+            @apply transform translate-x-2;
+            @apply transition;
+            @apply duration-500;
+
+        }
+    }
+}
+
+
+.blogTitle {
+    @include blog-item-link;
+}
+
+.listItem {
+    @apply mt-5;
+}

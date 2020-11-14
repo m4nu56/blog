@@ -1,4 +1,4 @@
-import '../styles/global.css'
+import '../styles/global.scss'
 import { MDXProvider } from '@mdx-js/react'
 import Layout, { siteTitle } from '../components/layout'
 import Head from 'next/head'

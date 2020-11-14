@@ -1,7 +1,8 @@
-import styles from './index.module.css'
+import styles from './index.module.scss'
 import { getSortedPostsData } from '../lib/posts'
 import Link from 'next/link'
 import Date from '../components/date'
+import { FaArrowRight } from 'react-icons/fa'
 
 export default function Home({ allPostsData }) {
   return (
@@ -16,13 +17,16 @@ export default function Home({ allPostsData }) {
       <section>
         <ul>
           {allPostsData.map(({ id, publishDate, title }) => (
-            <li key={id} className={'mt-5'}>
+            <li key={id} className={styles.listItem}>
               <Link href="/posts/[id]" as={`/posts/${id}`}>
-                <a className={styles.blogTitle}>{title}</a>
+                <a className={styles.blogTitle}>
+                  <span>
+                  <FaArrowRight size={15}/> {title}
+                  </span>
+                </a>
               </Link>
-              <br />
               <small>
-                <Date dateString={publishDate} />
+                <Date dateString={publishDate}/>
               </small>
             </li>
           ))}
