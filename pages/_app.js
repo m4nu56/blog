@@ -6,13 +6,11 @@ import CodeBlock from '../components/CodeBlock'
 import Home from '.'
 
 const mdComponents = {
-  h1: props => <h1 style={{ color: 'tomato' }} {...props} />,
-  pre: props => <div {...props} />,
   code: CodeBlock
 }
 
 
-export default ({ Component, pageProps }) => {
+export default function MyApp ({ Component, pageProps }) {
   return (
     <MDXProvider components={mdComponents}>
       <Layout home={Component == Home}>
