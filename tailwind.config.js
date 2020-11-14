@@ -1,7 +1,7 @@
 module.exports = {
   purge: [
     './src/components/**/*.js',
-    './pages/**/*.js'
+    './pages/**/*.js',
   ],
   theme: {
     extend: {},
@@ -36,7 +36,7 @@ module.exports = {
       },
 
       gray: {
-        "lightest": "#fff",
+        'lightest': '#fff',
         100: '#f7fafc',
         200: '#edf2f7',
         300: '#e2e8f0',
@@ -158,8 +158,8 @@ module.exports = {
   },
   variants: {},
   plugins: [
-    require( 'tailwindcss' ),
-    require( 'precss' ),
-    require( 'autoprefixer' )
+    require('tailwindcss'),
+    require('precss'),
+    require('autoprefixer'),
   ],
 }

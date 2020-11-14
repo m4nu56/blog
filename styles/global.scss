@@ -18,22 +18,10 @@ h2 {
   @apply text-3xl text-primary-600 font-extrabold text-left;
 }
 
-//a {
-//  color: #0070f3;
-//  text-decoration: none;
-//}
-//
-//a:hover {
-//  text-decoration: underline;
-//}
-
 @mixin link-hover {
-  @apply border-b-2;
-  @apply border-transparent;
-  @apply pb-1;
+  @apply border-transparent border-b-2 pb-1;
   &:hover {
-    @apply transition;
-    @apply duration-500;
+    @apply transition duration-500;
     @apply text-primary-600;
     @apply border-gray-600;
   }
@@ -42,7 +30,6 @@ h2 {
 a {
   @include link-hover;
 }
-
 
 code {
   color: rgb(51, 51, 51);
