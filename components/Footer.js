@@ -13,8 +13,8 @@ const socials = [
 export default function Footer () {
     return (
       <div className={styles.footer}>
-          {socials.map(({ title, href, icon }) =>
-            <a href={href} className={styles.footerLink} title={title}>{icon}</a>,
+          {socials.map(({ title, href, icon }, index) =>
+            <a key={index} href={href} className={styles.footerLink} title={title}>{icon}</a>,
           )}
           <div className={styles.copyrights}>
               <span>&copy;{new Date().getFullYear()} Emmanuel Balpe. All Rights Reserved.</span>

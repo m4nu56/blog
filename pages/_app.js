@@ -9,8 +9,8 @@ const mdComponents = {
   code: CodeBlock
 }
 
-
 export default function MyApp ({ Component, pageProps }) {
+
   return (
     <MDXProvider components={mdComponents}>
       <Layout home={Component == Home}>
