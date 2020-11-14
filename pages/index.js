@@ -6,7 +6,7 @@ import { FaArrowRight } from 'react-icons/fa'
 
 export default function Home({ allPostsData }) {
   return (
-    <React.Fragment>
+    <>
       <section>
         <h2>Welcome, my name is Manu !</h2>
         <p>I'm a enthusiast Web Developer. I've been working with Java for about 10 years and I've been really serious with JavaScript for 2 years now.
@@ -32,7 +32,7 @@ export default function Home({ allPostsData }) {
           ))}
         </ul>
       </section>
-    </React.Fragment>
+    </>
   )
 }
 

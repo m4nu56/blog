@@ -2,7 +2,7 @@ import Head from 'next/head'
 import styles from './layout.module.css'
 import Link from 'next/link'
 import Footer from './Footer'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { initGA, logPageView } from './googleAnalytics.js'
 import Image from 'next/image'
 
@@ -38,28 +38,32 @@ export default function Layout({ children, home }) {
       </Head>
       <header className={'container'}>
         {home ? (
-          <div style={{ textAlign: 'center' }}>
+          <div className={`text-center`}>
             <Image
               src="/images/profile.png"
-              className={`rounded-full mx-auto`}
-              // style={{ maxWidth: '10rem' }}
               alt={name}
-              width='50'
-              height='50'
+              width={90}
+              height={90}
+              quality={100}
+              className='rounded-full'
             />
-            <h1 className={''}>{name}</h1>
+            <h1>{name}</h1>
           </div>
         ) : (
+          <div className={`text-center`}>
             <Link href="/">
               <a>
-                <img
+                <Image
                   src="/images/profile.png"
-                  className={`rounded-full mx-auto`}
-                  style={{ maxWidth: '6rem' }}
                   alt={name}
+                  width={50}
+                  height={50}
+                  quality={100}
+                  className='rounded-full'
                 />
               </a>
             </Link>
+          </div>
           )}
       </header>
 
