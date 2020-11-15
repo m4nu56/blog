@@ -1,0 +1,25 @@
+@mixin navbar-button {
+  @apply block px-3 py-2 rounded-md text-sm font-medium leading-5 border-gray-400 border-2;
+  @apply transition duration-150 ease-in-out;
+}
+
+.navbarButton {
+  @include navbar-button;
+}
+
+.navbarButton:hover {
+  @apply text-primary-800 border-primary-800;
+}
+
+.navbarButton:focus, .navbarButtonActive:focus {
+  @apply outline-none text-white border-primary-800 bg-primary-800;
+}
+
+.navbarButtonActive {
+  @include navbar-button;
+  @apply text-white border-primary-800 bg-primary-800;
+}
+
+.navbarButtonActive:hover {
+  @apply text-primary-800 border-primary-800 bg-white;
+}

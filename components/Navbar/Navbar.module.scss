@@ -1,0 +1,13 @@
+.navbar {
+  @apply bg-white;
+  @apply shadow-2xl;
+  @apply fixed w-full top-0 overflow-hidden;
+}
+
+.navBarButtonContainer {
+  @apply flex;
+  a {
+    @apply ml-4;
+  }
+}
+

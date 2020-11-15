@@ -1,12 +1,15 @@
 import styles from './index.module.scss'
 import { getSortedPostsData } from '../lib/posts'
 import Link from 'next/link'
-import Date from '../components/date'
+import DateFormatter from '../components/DateFormatter'
 import { FaArrowRight } from 'react-icons/fa'
+import { name } from '../components/Layout'
+import React from 'react'
 
 export default function Home({ allPostsData }) {
   return (
     <>
+      <h1>{name}</h1>
       <section>
         <h2>Welcome, my name is Manu !</h2>
         <p>I'm a enthusiast Web Developer. I've been working with Java for about 10 years and I've been really serious with JavaScript for 2 years now.
@@ -24,7 +27,7 @@ export default function Home({ allPostsData }) {
                 </a>
               </Link>
               <small>
-                <Date dateString={publishDate}/>
+                <DateFormatter dateString={publishDate}/>
               </small>
             </li>
           ))}

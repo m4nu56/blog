@@ -1,0 +1,27 @@
+.container {
+  @apply mt-24 mx-auto max-w-screen-sm;
+}
+
+@screen md {
+  .container {
+    @apply max-w-screen-md;
+  }
+}
+
+@screen lg {
+  .container {
+    @apply max-w-screen-lg;
+  }
+}
+
+//@screen xl {
+//  .container {
+//    @apply max-w-screen-xl;
+//  }
+//}
+
+//@screen 2xl {
+//  .container {
+//    @apply max-w-screen-xl;
+//  }
+//}

@@ -27,15 +27,15 @@
     "remark-mdx": "^1.6.18",
     "sass": "^1.29.0",
     "swr": "^0.3.0",
-    "tailwindcss": "^1.9.6"
-  },
-  "devDependencies": {
-    "@mdx-js/react": "^1.6.21",
+    "tailwindcss": "^1.9.6",
+    "postcss-import": "^13.0.0",
     "autoprefixer": "^10.0.2",
     "postcss-flexbugs-fixes": "^5.0.1",
-    "postcss-import": "^13.0.0",
     "postcss-preset-env": "^6.7.0",
     "precss": "^4.0.0",
     "styled-jsx-plugin-postcss": "^3.0.2"
+  },
+  "devDependencies": {
+    "@mdx-js/react": "^1.6.21"
   }
 }

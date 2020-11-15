@@ -1,6 +1,7 @@
 export default {
   title: '(Yet) another developer blog',
   titleTemplate: '%s | m4nu56',
+  name: 'm4nu56',
   openGraph: {
     type: 'website',
     locale: 'en_IE',

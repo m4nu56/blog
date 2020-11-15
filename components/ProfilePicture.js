@@ -1,7 +1,7 @@
 import styles from './ProfilePicture.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
-import { name } from './layout'
+import { name } from './Layout'
 import React from 'react'
 
 export default function ProfilePicture ({ home }) {
@@ -25,8 +25,8 @@ export default function ProfilePicture ({ home }) {
       <Link href="/"><a><Image
         src="/images/profile.png"
         alt={name}
-        width={90}
-        height={90}
+        width={50}
+        height={50}
       /></a></Link>
     </figure>
   )

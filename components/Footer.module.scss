@@ -1,6 +1,17 @@
 .footer {
-    @apply text-center;
-    @apply mt-10;
+    @apply mx-auto text-center mt-10 mb-3 max-w-screen-sm px-4;
+}
+
+@screen md {
+    .footer {
+        @apply max-w-screen-md;
+    }
+}
+
+@screen lg {
+    .footer {
+        @apply max-w-screen-lg;
+    }
 }
 
 @mixin icon-hover {
