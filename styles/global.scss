@@ -18,17 +18,14 @@ h2 {
   @apply text-3xl text-primary-600 font-extrabold text-left;
 }
 
-@mixin link-hover {
+a {
   @apply border-transparent border-b-2 pb-1;
-  &:hover {
-    @apply transition duration-500;
-    @apply text-primary-600;
-    @apply border-gray-600;
-  }
 }
 
-a {
-  @include link-hover;
+a:hover {
+  @apply transition duration-500;
+  @apply text-primary-600;
+  @apply border-gray-600;
 }
 
 code {
@@ -42,15 +39,11 @@ code {
   border-radius: 3px;
 }
 
-img {
-  @apply m-5;
-}
-
 ol, ul {
   @apply p-5;
 }
 
-blockquote, dl, dd, h1, h2, h3, h4, h5, h6, figure, p, pre {
+blockquote, dl, dd, h1, h2, h3, h4, h5, h6, p, pre {
   @apply m-3;
 }
 

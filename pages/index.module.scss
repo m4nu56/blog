@@ -1,4 +1,4 @@
-@mixin blog-item-link {
+.postTitle {
     @apply text-xl;
     line-height: 1.2em;
     @apply mt-2;
@@ -8,17 +8,12 @@
             @apply flex-none mr-3;
         }
     }
-    &:hover {
-        svg {
-            @apply transform translate-x-2;
-            @apply transition duration-500;
-        }
-    }
 }
-
-
-.blogTitle {
-    @include blog-item-link;
+.postTitle:hover {
+    svg {
+        @apply transform translate-x-2;
+        @apply transition duration-500;
+    }
 }
 
 .listItem {
