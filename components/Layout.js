@@ -25,7 +25,7 @@ export default function Layout ({ children }) {
   }, [])
 
   return (
-    <div>
+    <>
       <header>
         <Navbar activeItem={activeItem}/>
       </header>
@@ -42,6 +42,6 @@ export default function Layout ({ children }) {
 
       <Footer/>
 
-    </div>
+    </>
   )
 }

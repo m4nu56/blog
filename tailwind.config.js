@@ -1,8 +1,9 @@
 module.exports = {
-  purge: [
-    './src/components/**/*.js',
-    './pages/**/*.js',
-  ],
+  future: {
+    removeDeprecatedGapUtilities: true,
+    purgeLayersByDefault: true,
+  },
+  purge: ['./components/**/*.{js,ts,jsx,tsx}', './pages/**/*.{js,ts,jsx,tsx}'],
   theme: {
     screens: {
       sm: '640px',
@@ -164,9 +165,5 @@ module.exports = {
     },
   },
   variants: {},
-  plugins: [
-    require('tailwindcss'),
-    require('precss'),
-    require('autoprefixer'),
-  ],
+  plugins: [],
 }

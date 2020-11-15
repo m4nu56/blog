@@ -1,33 +1,16 @@
 import styles from './ProfilePicture.module.scss'
 import Image from 'next/image'
-import Link from 'next/link'
-import { name } from './Layout'
 import React from 'react'
 
-export default function ProfilePicture ({ home }) {
-  if (home) {
-    return (
-      <>
-        <figure className={styles.imageContainer}>
-          <Image
-            src="/images/profile.png"
-            alt={name}
-            width={90}
-            height={90}
-          />
-        </figure>
-        <h1>{name}</h1>
-      </>
-    )
-  }
+export default function ProfilePicture () {
   return (
     <figure className={styles.imageContainer}>
-      <Link href="/"><a><Image
+      <Image
         src="/images/profile.png"
-        alt={name}
-        width={50}
-        height={50}
-      /></a></Link>
+        alt="m4nu56"
+        layout="fill"
+        quality={100}
+      />
     </figure>
   )
 }
