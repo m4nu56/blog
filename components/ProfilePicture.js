@@ -14,7 +14,6 @@ export default function ProfilePicture ({ home }) {
             alt={name}
             width={90}
             height={90}
-            quality={100}
           />
         </figure>
         <h1>{name}</h1>
@@ -26,9 +25,8 @@ export default function ProfilePicture ({ home }) {
       <Link href="/"><a><Image
         src="/images/profile.png"
         alt={name}
-        width={50}
-        height={50}
-        quality={100}
+        width={90}
+        height={90}
       /></a></Link>
     </figure>
   )

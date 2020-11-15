@@ -8,12 +8,12 @@
   perspective: 1500px;
   @apply mx-auto;
   img {
-    transform: rotateX(15deg) rotateY(-18deg) rotateZ(3deg);
     @apply rounded-full;
+    transform: rotate(0);
     transition: .3s;
   }
 
   &:hover img {
-    transform: rotate(0);
+    transform: rotateX(15deg) rotateY(-18deg) rotateZ(3deg);
   }
 }
