@@ -3,8 +3,7 @@
 }
 
 .imageContainer {
-  width: 120px;
-  height: 120px;
+  @apply w-56 h-56;
   perspective: 1500px;
   @apply mx-auto;
   img {
