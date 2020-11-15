@@ -1,0 +1,84 @@
+[
+  {
+    "title": "3D Perspective in CSS",
+    "description": "How to create a 3D space in plain CSS.",
+    "tags": [
+      "CSS",
+      "3D"
+    ],
+    "tweetId": "1326916915479142401"
+  },
+  {
+    "title": "Oh Shit, Git!?!",
+    "description": "Git is hard: screwing up is easy, and figuring out how to fix your mistakes is fucking impossible. Git documentation has this chicken and egg problem where you can't search for how to get yourself out of a mess, unless you already know the name of the thing you need to know about in order to fix your problem..",
+    "tags": [
+      "GIT"
+    ],
+    "url": "https://ohshitgit.com/"
+  },
+  {
+    "title": "m4nu56.dev",
+    "description": "Developer blog",
+    "tags": [],
+    "url": "https://m4nu56.dev"
+  },
+  {
+    "title": "Nullish Assignment operator `??=`.",
+    "tags": [
+      "JS"
+    ],
+    "tweetId": "1326533052529512448"
+  },
+  {
+    "title": "`console.log({myVariable})`",
+    "tags": [
+      "JS"
+    ],
+    "tweetId": "1326192332518133762"
+  },
+  {
+    "title": "The super fast color schemes generator!",
+    "description": "If you need help choosing color schemes for your projects this app is made for you!",
+    "tags": [
+      "CSS"
+    ],
+    "url": "http://coolors.co/"
+  },
+  {
+    "title": "Operator Lookup",
+    "description": "A search engine for JS Operators",
+    "tags": [
+      "JS"
+    ],
+    "tweetId": "1325823478583320579"
+  },
+  {
+    "title": "Daily handpicked UI inspiration & patterns",
+    "tags": [
+      "CSS"
+    ],
+    "url": "https://uigarage.net/"
+  },
+  {
+    "title": "Remove Image Background online",
+    "tags": [
+      "Image"
+    ],
+    "url": "https://www.remove.bg"
+  },
+  {
+    "title": "Generate gradients between 2 colors",
+    "tags": [
+      "CSS"
+    ],
+    "url": "https://uigradients.com/"
+  },
+  {
+    "title": "Asynchronous JS CheatSheet",
+    "tags": [
+      "JS"
+    ],
+    "url": "https://m4nu56.dev/images/bookmarks/asynchronous_js_cheatsheet.jpeg"
+  }
+]
+
