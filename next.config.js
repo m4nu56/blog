@@ -8,6 +8,7 @@ const withMDX = require('@next/mdx')({
         remarkPlugins: [images, emoji]
       }
 })
+
 module.exports = withMDX({
   pageExtensions: ['js', 'jsx', 'md', 'mdx'],
   sassOptions: {

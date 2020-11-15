@@ -13,6 +13,7 @@
     "date-fns": "^2.15.0",
     "gray-matter": "^4.0.2",
     "next": "^10.0.1",
+    "next-seo": "^4.17.0",
     "prism-react-renderer": "^1.1.1",
     "prismjs": "^1.21.0",
     "react": "16.13.1",
@@ -29,6 +30,7 @@
     "tailwindcss": "^1.9.6"
   },
   "devDependencies": {
+    "@mdx-js/react": "^1.6.21",
     "autoprefixer": "^10.0.2",
     "postcss-flexbugs-fixes": "^5.0.1",
     "postcss-import": "^13.0.0",
