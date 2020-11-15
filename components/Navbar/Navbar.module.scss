@@ -2,6 +2,7 @@
   @apply bg-white;
   @apply shadow-2xl;
   @apply fixed w-full top-0 overflow-hidden;
+  @apply z-10;
 }
 
 .navBarButtonContainer {

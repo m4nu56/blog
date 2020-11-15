@@ -11,7 +11,7 @@ export default {
     site_name: '(Yet) another developer blog',
     images: [
       {
-        url: 'https://m4nu56.dev/profile.png',
+        url: 'https://m4nu56.dev/images/profile.png',
         width: 400,
         height: 400,
         alt: 'm4nu56 profile picture'

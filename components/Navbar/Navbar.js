@@ -28,8 +28,8 @@ export default function Navbar ({activeItem}) {
           <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
             <div className="hidden sm:block sm:ml-6 my-auto">
               <div className={styles.navBarButtonContainer}>
-                <NavbarButton title="Posts" active={activeItem === 'POSTS'} href="/" />
-                <NavbarButton title="Bookmarks" active={activeItem === 'BOOKMARKS'} href="/bookmarks"/>
+                <NavbarButton key={1} title="Posts" active={activeItem === 'POSTS'} href="/" />
+                <NavbarButton key={2} title="Bookmarks" active={activeItem === 'BOOKMARKS'} href="/bookmarks"/>
               </div>
             </div>
           </div>
@@ -50,8 +50,8 @@ export default function Navbar ({activeItem}) {
 
       <div className={(mobileMenuVisible ? 'block' : 'hidden') + ' sm:hidden'}>
         <div className="px-2 pt-2 pb-3">
-          <NavbarButton title="Posts" active={activeItem === 'POSTS'} href="/" />
-          <NavbarButton title="Bookmarks" active={activeItem === 'BOOKMARKS'} href="/bookmarks"/>
+          <NavbarButton key={1} title="Posts" active={activeItem === 'POSTS'} href="/" />
+          <NavbarButton key={2} title="Bookmarks" active={activeItem === 'BOOKMARKS'} href="/bookmarks"/>
         </div>
       </div>
     </nav>
