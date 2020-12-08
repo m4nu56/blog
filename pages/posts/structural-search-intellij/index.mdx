@@ -1,0 +1,72 @@
+export const meta = {
+    title: "Use the structural search function of Intellij IDEA to smart replace",
+    tags: ["java", "intellij", "log"],
+    publishDate: "2020-12-08",
+    modifiedDate: false,
+    seoDescription: null,
+    exclude: false
+};
+
+# Use the structural search function of Intellij IDEA to smart replace
+
+I've had to migrate an old Java project that wasn't using any log framework to Log4J. 
+I'll describe my Log4J/Slf4J configuration in another post. 
+This post is just to describe how the Structural Search dialog can help you easily find and replace references in your code. 
+
+As always this is just a simple example of my personal use case, you can find a complete description of the functionality in the [Intellij documentation](https://www.jetbrains.com/help/idea/tutorial-work-with-structural-search-and-replace.html)
+
+## The existing statements
+
+My project was full of basic java log statement and stackStraces. 
+
+```java
+System.out.println("This is an important info!");
+```
+
+```java
+...
+} catch (Exception e) {
+	e.printStackTrace();
+	throw e;
+}
+...
+```
+
+As you can imagine the variable `e` here can be named anything. This is where the Structural Search can be helpful. 
+
+## Replacement
+
+We want to replace all printStackTrace with a simple: 
+
+```java
+log.error(e.getMessage(), e);
+```
+
+![replace-exceptions](/images/structural-search-intellij/replace-exceptions.png)
+
+We simple identify the variables exceptions with: `$exception$.printStackTrace();` and replace it by `log.error($exception$.getMessage(), $exception$);` using the `$exception$` variable we defined in the search template. 
+
+## Add a logger statement in all classes
+
+I'm using [Lombok](https://projectlombok.org/) to add a logger at compilation time using [https://projectlombok.org/features/log](https://projectlombok.org/features/log)
+
+So I need to add an annotation `@Slf4j` at to all classes. 
+
+![structural-search-dialog](/images/structural-search-intellij/structural-search-dialog.png)
+
+I'm using the variables: 
+
+- `$Slf4j$` with a constraint Count `min=0 and max=0` so that only classes without the annotation will be found
+- `$Class$` will find any Class in my project
+
+And I replace the variable `$Slf4j$` with `@Slf4J`, Intellij will automatically add the missing import and reformat the code. 
+
+You can then click the `Find` button and you will see in a new `Find` tab a list of all occurences. 
+
+You can then decide to Replace All of go one by one. You can even preview the replacement before it occurs: 
+
+![structural-replacement-preview](/images/structural-search-intellij/structural-replacement-preview.png)
+
+![structural-replacement-done](/images/structural-search-intellij/structural-replacement-done.png)
+
+
