@@ -23,7 +23,7 @@
     "react-twitter-embed": "^3.0.3",
     "remark": "^12.0.1",
     "remark-emoji": "^2.1.0",
-    "remark-html": "^13.0.1",
+    "remark-html": "^13.0.2",
     "remark-images": "^2.0.0",
     "remark-mdx": "^1.6.18",
     "sass": "^1.29.0",
