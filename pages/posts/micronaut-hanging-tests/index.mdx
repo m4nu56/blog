@@ -25,13 +25,28 @@ After some investigation we've found out that the issue was caused by the fact t
 `KafkaListener` in our projects were still active and processing messages even after the test was finished.
 This caused the application to keep running and the test engine to wait for the application to finish.
 
-Our solution was to add a `@PreDestroy` method to the `Application` class so that the listeners can terminate
+Our solution was to add a `@PreDestroy` method to a new `AppApplicationListener` singleton so that the listeners can terminate
 their process so that the application shutdown can be successful.
 
 ```java
-@PreDestroy
-void onShutdown() throws InterruptedException {
-    LOGGER.info("PreDestroy: Shutting down after a sleep of 1000ms to allow the tests to complete.");
-    Thread.sleep(1000);
+@Singleton
+public class AppEventListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppEventListener.class);
+
+    @EventListener
+    public void onStartupEvent(StartupEvent event) {
+        ...
+    }
+
+    @PreDestroy
+    void onShutdown() throws InterruptedException {
+        LOGGER.info("PreDestroy: Shutting down after a sleep of 1000ms to allow the tests to complete.");
+        LOGGER.debug("It looks like the test is stuck if we don't implement this @AfterAll method. " +
+                "This is an issue with Micronaut and JUnit 5." +
+                "https://github.com/micronaut-projects/micronaut-gcp/issues/638");
+        Thread.sleep(1000);
+    }
+
 }
 ```
