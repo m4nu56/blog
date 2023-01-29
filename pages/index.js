@@ -20,10 +20,8 @@ export default function Home({ allPostsData }) {
         <ul>
           {allPostsData.map(({ id, publishDate, title }) => (
             <li key={id} className={styles.listItem}>
-              <Link href="/posts/[id]" as={`/posts/${id}`}>
-                <a className={styles.postTitle}>
+              <Link href="/posts/[id]" as={`/posts/${id}`} className={styles.postTitle}>
                   <span><FaArrowRight size={15}/>{title}</span>
-                </a>
               </Link>
               <small>
                 <DateFormatter dateString={publishDate}/>

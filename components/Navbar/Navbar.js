@@ -39,11 +39,11 @@ export default function Navbar ({title, activeItem}) {
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             <div className="ml-3 relative">
               <div className='h-8 w-8'>
-                <Link href="/"><a><img
+                <Link href="/"><img
                   src="/images/profile.png"
                   alt={name}
                   className="rounded-full"
-                /></a></Link>
+                /></Link>
               </div>
             </div>
           </div>

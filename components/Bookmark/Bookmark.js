@@ -4,6 +4,7 @@ import { BiLoaderCircle } from 'react-icons/bi'
 import { TwitterTweetEmbed } from 'react-twitter-embed'
 import React from 'react'
 import dynamic from 'next/dynamic';
+
 const ReactTinyLink = dynamic(
   () => import('react-tiny-link').then(mod => mod.ReactTinyLink),
   { ssr: false }
@@ -17,7 +18,7 @@ export default function Bookmark ({ title, description, tags, tweetId, url }) {
       <div className={styles.tagContainer}>
         {tags && tags.map(tag => <NavbarButton title={tag} active={true}/>)}
       </div>
-      {tweetId != null && <div className={styles.tweetContainer}>
+      {false && tweetId != null && <div className={styles.tweetContainer}>
         <TwitterTweetEmbed
           tweetId={tweetId}
           placeholder={<BiLoaderCircle/>}
