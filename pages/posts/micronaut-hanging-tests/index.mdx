@@ -1,0 +1,32 @@
+export const meta = { 
+    title: `Solving the hanging tests in Micronaut application`,
+    tags: ["micronaut", "java", "testing", "junit", "gradle"],
+    publishDate: "2023-01-29",
+    modifiedDate: false, 
+    seoDescription: "", 
+    exclude: false 
+};
+
+# Solving the hanging tests in Micronaut application
+
+We've been facing a strange issue with our Micronaut application tests.
+Specifically tests that were producing Kafka messages were successfully run bug sometimes the test engine was kept hanging and never finishing.
+
+![hanging-test](/images/micronaut-hanging-tests/hanging-test.png)
+
+This problem seems related with this issue described here: https://github.com/micronaut-projects/micronaut-gcp/issues/638
+
+After some investigation we've found out that the issue was caused by the fact that sometimes some
+`KafkaListener` in our projects were still active and processing messages even after the test was finished.
+This caused the application to keep running and the test engine to wait for the application to finish.
+
+Our solution was to add a `@PreDestroy` method to the `Application` class so that the listeners can terminate
+their process so that the application shutdown can be successful.
+
+```java
+@PreDestroy
+void onShutdown() throws InterruptedException {
+    LOGGER.info("PreDestroy: Shutting down after a sleep of 1000ms to allow the tests to complete.");
+    Thread.sleep(1000);
+}
+```
