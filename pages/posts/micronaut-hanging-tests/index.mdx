@@ -14,6 +14,11 @@ Specifically tests that were producing Kafka messages were successfully run bug 
 
 ![hanging-test](/images/micronaut-hanging-tests/hanging-test.png)
 
+We are running the following versions:
+- Java 17
+- Gradle 7.6
+- [Micronaut 3.8.3](https://docs.micronaut.io/3.8.3/guide/index.html)
+
 This problem seems related with this issue described here: https://github.com/micronaut-projects/micronaut-gcp/issues/638
 
 After some investigation we've found out that the issue was caused by the fact that sometimes some
