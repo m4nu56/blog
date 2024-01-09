@@ -9,7 +9,7 @@ I also discovered [Tailwind CSS](https://tailwindcss.com/) that I wanted to try 
 
 ## Roadmap
 
-- Upgrade to latest version of NextJS
+- Upgrade to latest version of NextJS (v14 √)
 - Add a navigation menu and a "About me" page
 - Build a theme for the website to make it more attractive :-°
 - Integrate twitter feed with last tweets

@@ -16,7 +16,7 @@ export default function Bookmark ({ title, description, tags, tweetId, url }) {
       <h2 className={styles.title}>{title}</h2>
       <p>{description}</p>
       <div className={styles.tagContainer}>
-        {tags && tags.map(tag => <NavbarButton title={tag} active={true}/>)}
+        {tags && tags.map((tag, index) => <NavbarButton key={index} title={tag} active={true}/>)}
       </div>
       {false && tweetId != null && <div className={styles.tweetContainer}>
         <TwitterTweetEmbed
