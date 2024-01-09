@@ -7,7 +7,9 @@ export default function Bookmarks () {
     <>
       <h1>Bookmarks</h1>
       <div className={styles.bookmarkContainer}>
-        {bookmarks.map((bookmark, index) =>
+        {bookmarks
+            .filter(bookmark => bookmark.tweetId == null)
+            .map((bookmark, index) =>
           <Bookmark key={index} title={bookmark.title} description={bookmark.description} tags={bookmark.tags} tweetId={bookmark.tweetId} url={bookmark.url}/>)}
       </div>
     </>

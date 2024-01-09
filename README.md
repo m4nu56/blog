@@ -9,6 +9,7 @@ I also discovered [Tailwind CSS](https://tailwindcss.com/) that I wanted to try 
 
 ## Roadmap
 
+- Integrate twitter feed with last tweets (CORS Issue in January 2024 √)
 - Add a navigation menu and a "About me" page
 - Build a theme for the website to make it more attractive :-°
 - Add a search functionnality
@@ -16,7 +17,6 @@ I also discovered [Tailwind CSS](https://tailwindcss.com/) that I wanted to try 
 
 ### Done
 - Upgrade to latest version of NextJS (v14 January 2024 √)
-- Integrate twitter feed with last tweets (January 2024 √)
 
 Some of my posts are also available on [Medium](https://medium.com/@mnu)
 
