@@ -2,21 +2,22 @@
 
 Personal blog about development where I share some of my work.
 
-Built with next.js, deployed on Vercel. 
+Built with Next.js, deployed on Vercel. 
 
-At first I wanted to play a little with NextJS and I decided to move the few posts I've been publishing on Medium up in here.
-I also discovered [Tailwind CSS](https://tailwindcss.com/) that I wanted to try for a long time now and it just made me realized how bad I am at designing stuff :-)
+At first, I wanted to play a little with Next.js and I decided to move the few posts I've been publishing on Medium up in here.
+I also discovered [Tailwind CSS](https://tailwindcss.com/) that I wanted to try for a long time now, 
+and it just made me realized how bad I am at designing stuff 😅
 
 ## Roadmap
 
-- Integrate twitter feed with last tweets (CORS Issue in January 2024 √)
+- Integrate Twitter feed with last tweets (CORS Issue in January 2024 ✅)
 - Add a navigation menu and a "About me" page
 - Build a theme for the website to make it more attractive :-°
-- Add a search functionnality
+- Add a search functionality
 - Add a "Correct this blog post on GitHub" button 
 
 ### Done
-- Upgrade to latest version of NextJS (v14 January 2024 √)
+- Upgrade to latest version v14 of Next.js (January 2024 ✅)
 
 Some of my posts are also available on [Medium](https://medium.com/@mnu)
 
