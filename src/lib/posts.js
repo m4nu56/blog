@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-const postsDirectory = path.join(process.cwd(), './pages/posts')
+const postsDirectory = path.join(process.cwd(), './src/pages/posts')
 
 export function getSortedPostsData() {
     // Get file names under /pages/posts

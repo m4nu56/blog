@@ -1,6 +1,6 @@
 import Bookmark from '../../components/Bookmark/Bookmark'
 import styles from './index.module.scss'
-import bookmarks from '../../public/bookmarks.json'
+import bookmarks from '/public/bookmarks.json'
 
 export default function Bookmarks () {
   return (
